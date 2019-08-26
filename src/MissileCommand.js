@@ -21,6 +21,7 @@ function ResetGame(level)
 {
     levelInfo = new LevelInfo();
 
+    camera = new Camera();
     city = new City(0, Canvas_Edge_Bottom);
 
     defenderMissilesMgr = new DefenderMissileManager(
@@ -46,6 +47,8 @@ let enemyMissilesMgr;
 let defenderMissilesMgr;
 let defenderReticle;
 let levelInfo;
+let camera;
+
 
 //----------------------------------------------------------------------------//
 // Setup / Draw                                                               //
@@ -55,8 +58,6 @@ function Setup()
 {
     ResetGame();
 }
-
-
 
 //------------------------------------------------------------------------------
 function Draw(dt)
@@ -72,11 +73,13 @@ function Draw(dt)
     if(defenderReticle.isShooting && defenderMissilesMgr.canShoot()) {
         defenderMissilesMgr.shoot(defenderReticle.position);
         defenderReticle    .shoot();
+        camera.addPlayerShootShake();
     }
 
     defenderMissilesMgr.update(dt);
     explosionMgr   .update(dt);
 
+    camera.update(dt);
     //
     // Check Collisions
     for(let i = 0; i < enemyMissilesMgr.missiles.length; ++i) {
@@ -93,6 +96,7 @@ function Draw(dt)
 
             if(collided) {
                 enemyMissilesMgr.killMissile(i);
+                camera.addPlayerExplosionShake(player_explosion.radius);
             }
         }
     }
@@ -100,13 +104,22 @@ function Draw(dt)
 
     //
     // Draw
-    city.draw();
+    Canvas_Push();
+        Canvas_Translate(camera.currPosition.x, camera.currPosition.y);
+        city.draw();
+    Canvas_Pop();
 
-    enemyMissilesMgr   .draw();
-    defenderMissilesMgr.draw();
+    Canvas_Push();
+        Canvas_Translate(camera.currPosition.x, 0);
 
-    explosionMgr.draw();
-    defenderReticle.draw();
+        enemyMissilesMgr   .draw();
+        defenderMissilesMgr.draw();
+
+        explosionMgr.draw();
+        defenderReticle.draw();
+    Canvas_Pop();
+
+
 }
 
 
@@ -115,7 +128,6 @@ function Draw(dt)
 //----------------------------------------------------------------------------//
 function KeyDown(code)
 {
-
 }
 
 
