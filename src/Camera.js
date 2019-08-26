@@ -26,7 +26,6 @@ class Camera
     //--------------------------------------------------------------------------
     addPlayerExplosionShake(radius)
     {
-        Log(radius);
         let s = new Shake(1.0, radius);
         this.playerExplosionShakes.push(s);
     } // addPlayerExplosionShake

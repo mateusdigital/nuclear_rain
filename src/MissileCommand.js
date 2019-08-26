@@ -25,8 +25,8 @@ function ResetGame(level)
     city = new City(0, Canvas_Edge_Bottom);
 
     defenderMissilesMgr = new DefenderMissileManager(
-        city.shootingPosition.x,
-        city.shootingPosition.y
+        city.position.x,
+        city.position.y
     );
 
     defenderReticle = new DefenderReticle(
@@ -79,11 +79,13 @@ function Draw(dt)
     defenderMissilesMgr.update(dt);
     explosionMgr   .update(dt);
 
-    camera.update(dt);
+
     //
     // Check Collisions
-    for(let i = 0; i < enemyMissilesMgr.missiles.length; ++i) {
+    for(let i = enemyMissilesMgr.missiles.length-1; i >= 0; --i) {
         let enemy_missile = enemyMissilesMgr.missiles[i];
+
+        // (Player Missiles vs Enemy Missiles)
         for(let j = 0; j < explosionMgr.playerExplosions.length; ++j) {
             let player_explosion = explosionMgr.playerExplosions[j];
             let collided = Math_CircleContainsPoint(
@@ -99,8 +101,41 @@ function Draw(dt)
                 camera.addPlayerExplosionShake(player_explosion.radius);
             }
         }
+
+        // (Enemy Missiles vs Player Cities)
+        let min_y = (city.position.y - BUILDING_HEIGHT - 10);
+        if(enemy_missile.currPosition.y < min_y) {
+            continue;
+        }
+
+        // Find the closest building...
+        let min_distance             = Infinity;
+        let building_to_be_destroyed = null;
+        for(let j = 0; j < city.buildings.length; ++j) {
+            let building = city.buildings[j];
+            if(building.isBeingDestroyed) {
+                continue;
+            }
+
+            let d = Math_DistanceSqr(
+                enemy_missile.currPosition.x,
+                enemy_missile.currPosition.y,
+                building.position.x,
+                building.position.y
+            );
+            if(d < min_distance) {
+                building_to_be_destroyed = building;
+                min_distance             = d;
+            }
+        }
+
+        building_to_be_destroyed.destroy();
+        enemyMissilesMgr.killMissile(i);
     }
 
+
+
+    camera.update(dt);
 
     //
     // Draw
@@ -118,8 +153,6 @@ function Draw(dt)
         explosionMgr.draw();
         defenderReticle.draw();
     Canvas_Pop();
-
-
 }
 
 

@@ -7,21 +7,107 @@ const BUILDING_MAX_RANDOM_GAP_Y = 15;
 const BUILDING_START_GAP_X      = 50;
 const BUILDING_GAP_X            = 80;
 
+class BuildingParticle
+{
+    constructor(x, y)
+    {
+        this.position = Vector_Create(x, y);
+        this.angle    = Math_Random(0, MATH_2PI);
+        this.speed    = Math_Random(100, 200);
+        this.size     = Math_RandomInt(4, 10);
+
+        this.timeToDie    = 0;
+        this.maxTimeToDie = Math_RandomInt(1, 2)
+        this.ratio        = 0;
+
+        this.done = false;
+    }
+
+    update(dt)
+    {
+        if(this.done) {
+            return;
+        }
+
+        this.timeToDie += dt;
+        if(this.timeToDie >= this.maxTimeToDie) {
+            this.done = true;
+            return;
+        }
+
+        this.position.x += Math_Cos(this.angle) * this.speed * dt;
+        this.position.y += Math_Sin(this.angle) * this.speed * dt;
+
+        this.ratio = this.timeToDie / this.maxTimeToDie;
+        this.color = chroma.hsl(this.ratio * 360, 1, 0.5);
+    }
+
+    draw()
+    {
+        if(this.done) {
+            return;
+        }
+
+        Canvas_Push();
+            Canvas_Translate(this.position.x, this.position.y);
+            Canvas_SetFillStyle(this.color);
+            let size = this.size * (1 - this.ratio);
+            Canvas_FillRect(0, 0, size, size);
+        Canvas_Pop();
+    }
+}
+
 
 class Building
 {
     constructor(x, y)
     {
         this.position = Vector_Create(x, y);
+        this.color = "magenta";
+        this.isBeingDestroyed = false;
+        this.particles = [];
+    }
+
+    destroy()
+    {
+        if(this.isBeingDestroyed) {
+            return;
+        }
+
+        this.color = "red";
+        this.isBeingDestroyed = true;
+
+        let particles_len = Math_Random(10, 20);
+        for(let i = 0; i < particles_len; ++i) {
+            let p = new BuildingParticle(this.position.x, this.position.y)
+            this.particles.push(p);
+        }
     }
 
     update(dt)
     {
+        if(!this.isBeingDestroyed) {
+            return;
+        }
 
+        for(let i = this.particles.length-1; i >= 0; --i) {
+            let p = this.particles[i];
+            p.update(dt);
+            if(p.done) {
+                Array_RemoveAt(this.particles, i);
+            }
+        }
     }
 
     draw()
     {
+        if(this.isBeingDestroyed) {
+            for(let i = 0; i < this.particles.length; ++i) {
+                this.particles[i].draw();
+            }
+            return;
+        }
+
         Canvas_Push();
             Canvas_Translate(this.position.x, this.position.y);
 
@@ -33,7 +119,7 @@ class Building
                 BUILDING_HEIGHT
             );
 
-            Canvas_SetStrokeStyle("magenta");
+            Canvas_SetStrokeStyle(this.color);
             Canvas_SetStrokeSize(2);
             Canvas_DrawRect(
                 -BUILDING_WIDTH  / 2,
@@ -126,7 +212,7 @@ class City
 
     constructor(x, y)
     {
-        this.shootingPosition = Vector_Create(x, y);
+        this.position = Vector_Create(x, y);
 
         this.buildings = [];
         this.terrain   = [];

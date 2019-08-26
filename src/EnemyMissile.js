@@ -21,27 +21,16 @@ class EnemyMissileManager
     //--------------------------------------------------------------------------
     killMissile(index)
     {
-        this.missiles[index].done = true;
+        let m = this.missiles[index];
+        Array_RemoveAt(this.missiles, index);
+
+        explosionMgr.addOtherExplosion(m.currPosition.x, m.currPosition.y);
         --this.activeMissiles;
     } // killMissile
 
     //--------------------------------------------------------------------------
     update(dt)
     {
-        //
-        // Remove killed missiles.
-        for(let i = this.missiles.length-1; i >= 0; --i) {
-            let m = this.missiles[i];
-            if(!m.done) {
-                continue;
-            }
-            Array_RemoveAt(this.missiles, i);
-            explosionMgr.addOtherExplosion(
-                m.currPosition.x,
-                m.currPosition.y
-            );
-        }
-
         //
         // Generate new missiles.
         if(this.activeMissiles < this.maxActiveMissiles) {
@@ -126,9 +115,9 @@ class EnemyMissile
 
         Canvas_Push()
             // @TODO(stdmatt): Debug draw...
-            Canvas_SetStrokeStyle("gray");
-            Canvas_SetStrokeSize(2);
-            Canvas_DrawLine(sx, sy, this.endPosition.x, this.endPosition.y);
+            // Canvas_SetStrokeStyle("gray");
+            // Canvas_SetStrokeSize(2);
+            // Canvas_DrawLine(sx, sy, this.endPosition.x, this.endPosition.y);
 
             //
             // Trail
