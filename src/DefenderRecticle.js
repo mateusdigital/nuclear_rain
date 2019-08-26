@@ -14,10 +14,10 @@ class DefenderReticle
     constructor(x, y)
     {
         this.position = Vector_Create(x, y);
+        this.rotation = 0;
+
         this.timeToRotate    = 0.3;
         this.maxTimeToRotate = 0.3;
-
-        this.rotation = 0;
     } // ctor
 
 
@@ -62,6 +62,7 @@ class DefenderReticle
         } else if(this.position.y >= Canvas_Edge_Bottom) {
             this.position.y = Canvas_Edge_Bottom;
         }
+
 
         this.timeToRotate += dt;
         if(this.timeToRotate >= this.maxTimeToRotate) {

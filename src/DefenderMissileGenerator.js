@@ -19,9 +19,6 @@ class DefenderMissileGenerator
 
         this.missiles = [];
 
-        this.activeMissiles    = 0;
-        this.maxActiveMissiles = DEFENDER_GENERATOR_MAX_ACTIVE_MISSILES;
-
         this.shotMissiles    = 0;
         this.maxShotMissiles = DEFENDER_GENERATOR_MAX_MISSILES;
 
@@ -33,9 +30,10 @@ class DefenderMissileGenerator
     canShoot()
     {
         // We can't shoot missiles now...
-        if(this.activeMissiles >= this.maxActiveMissiles ||
-            this.shotMissiles   >= this.maxShotMissiles   ||
-            this.shootTime      <  this.maxShootTime)
+        let active_missiles = this.missiles.length + explosionManager.playerExplosions.length;
+        if(active_missiles   >= DEFENDER_GENERATOR_MAX_ACTIVE_MISSILES ||
+           this.shotMissiles >= this.maxShotMissiles                   ||
+           this.shootTime    <  this.maxShootTime)
          {
              return false;
          }
@@ -51,12 +49,10 @@ class DefenderMissileGenerator
         }
 
         ++this.shotMissiles;
-        ++this.activeMissiles;
         this.shootTime = 0;
 
-        this.missiles.push(
-            new DefenderMissile(this.shootingPosition, targetPosition)
-        );
+        let missile = new DefenderMissile(this.shootingPosition, targetPosition);
+        this.missiles.push(missile);
     } // shoot
 
     //--------------------------------------------------------------------------
@@ -71,9 +67,12 @@ class DefenderMissileGenerator
             m.update(dt);
 
             // Remove
-            if(m.state == DEFENDER_MISSILE_STATE_DEAD) {
-                --this.activeMissiles;
+            if(m.done) {
                 Array_RemoveAt(this.missiles, i);
+                explosionManager.addPlayerExplosion(
+                    m.endPosition.x,
+                    m.endPosition.y
+                );
             }
         }
     } // update

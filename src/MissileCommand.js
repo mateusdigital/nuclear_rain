@@ -26,7 +26,7 @@ let enemyMissilesGen;
 let defenderReticle;
 let defenderMissilesGen;
 let city;
-
+let explosionManager;
 
 //----------------------------------------------------------------------------//
 // Setup / Draw                                                               //
@@ -48,6 +48,8 @@ function Setup()
     );
 
     enemyMissilesGen = new EnemyMissileGenerator();
+
+    explosionManager = new ExplosionManager();
 }
 
 
@@ -62,6 +64,7 @@ function Draw(dt)
     city            .update(dt);
     enemyMissilesGen.update(dt);
     defenderReticle .update(dt);
+    explosionManager.update(dt);
 
     if(defenderReticle.isShooting && defenderMissilesGen.canShoot()) {
         defenderMissilesGen.shoot(defenderReticle.position);
@@ -73,18 +76,23 @@ function Draw(dt)
     // Check Collisions
     for(let i = 0; i < enemyMissilesGen.missiles.length; ++i) {
         let enemy_missile = enemyMissilesGen.missiles[i];
-        for(let j = 0; j < defenderMissilesGen.missiles.length; ++j) {
-            let defender_missile = defenderMissilesGen.missiles[j];
+        for(let j = 0; j < explosionManager.playerExplosions.length; ++j) {
+            let player_explosion = explosionManager.playerExplosions[j];
             let collided = Math_CircleContainsPoint(
-                defender_missile.currPosition.x,
-                defender_missile.currPosition.y,
-                defender_missile.radius,
+                player_explosion.position.x,
+                player_explosion.position.y,
+                player_explosion.radius,
                 enemy_missile.currPosition.x,
                 enemy_missile.currPosition.y
             );
 
             if(collided) {
+
                 enemyMissilesGen.killMissile(i);
+                explosionManager.addOtherExplosion(
+                    enemy_missile.currPosition.x,
+                    enemy_missile.currPosition.y
+                );
             }
         }
     }
@@ -92,10 +100,14 @@ function Draw(dt)
 
     //
     // Draw
-    city               .draw();
+    city.draw();
+
     enemyMissilesGen   .draw();
     defenderMissilesGen.draw();
-    defenderReticle    .draw();
+
+    explosionManager.draw();
+
+    defenderReticle.draw();
 }
 
 
