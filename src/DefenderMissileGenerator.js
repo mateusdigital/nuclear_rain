@@ -30,13 +30,23 @@ class DefenderMissileGenerator
     } // ctor
 
     //--------------------------------------------------------------------------
-    shoot(targetPosition)
+    canShoot()
     {
         // We can't shoot missiles now...
         if(this.activeMissiles >= this.maxActiveMissiles ||
-           this.shotMissiles   >= this.maxShotMissiles   ||
-           this.shootTime      <  this.maxShootTime)
-        {
+            this.shotMissiles   >= this.maxShotMissiles   ||
+            this.shootTime      <  this.maxShootTime)
+         {
+             return false;
+         }
+
+         return true;
+    }
+
+    //--------------------------------------------------------------------------
+    shoot(targetPosition)
+    {
+        if(!this.canShoot()) {
             return;
         }
 

@@ -1,9 +1,9 @@
 //----------------------------------------------------------------------------//
 // Constants                                                                  //
 //----------------------------------------------------------------------------//
-const RETICLE_MOVE_SPEED = 300;
+const RETICLE_MOVE_SPEED              = 300;
 const RETICLE_SHOOTING_POSITION_Y_GAP = 20;
-
+const RETICLE_RADIUS                  = 5;
 
 //----------------------------------------------------------------------------//
 // Types                                                                      //
@@ -14,7 +14,18 @@ class DefenderReticle
     constructor(x, y)
     {
         this.position = Vector_Create(x, y);
+        this.timeToRotate    = 0.3;
+        this.maxTimeToRotate = 0.3;
+
+        this.rotation = 0;
     } // ctor
+
+
+    //--------------------------------------------------------------------------
+    shoot()
+    {
+        this.timeToRotate = 0;
+    } // shoot
 
     //--------------------------------------------------------------------------
     update(dt)
@@ -51,12 +62,39 @@ class DefenderReticle
         } else if(this.position.y >= Canvas_Edge_Bottom) {
             this.position.y = Canvas_Edge_Bottom;
         }
+
+        this.timeToRotate += dt;
+        if(this.timeToRotate >= this.maxTimeToRotate) {
+            this.timeToRotate = this.maxTimeToRotate;
+            this.rotation     = 0;
+            this.color        = "white";
+        } else {
+            let ratio = this.timeToRotate / this.maxTimeToRotate;
+            this.rotation = Math_Lerp(MATH_2PI, 0, ratio);
+            this.color    = chroma.hsl(ratio * 360, 1.0, 0.5);
+        }
     } // update
 
     //--------------------------------------------------------------------------
     draw()
     {
-        Canvas_SetFillStyle("green");
-        Canvas_FillCircle(this.position.x, this.position.y, 5);
+        Canvas_Push();
+            Canvas_Translate(this.position.x, this.position.y);
+            Canvas_Rotate(this.rotation);
+            Canvas_Scale(1 + (1 - (this.timeToRotate / this.maxTimeToRotate)));
+
+
+            Canvas_SetStrokeSize(2);
+            Canvas_SetStrokeStyle(this.color);
+
+
+            Canvas_DrawCircle(0, 0, RETICLE_RADIUS);
+
+            Canvas_DrawLine(0, -RETICLE_RADIUS * 2, 0, -RETICLE_RADIUS);
+            Canvas_DrawLine(0, +RETICLE_RADIUS * 2, 0, +RETICLE_RADIUS);
+
+            Canvas_DrawLine(-RETICLE_RADIUS * 2, 0, -RETICLE_RADIUS, 0);
+            Canvas_DrawLine(+RETICLE_RADIUS * 2, 0, +RETICLE_RADIUS, 0);
+        Canvas_Pop();
     } // draw
 }; // class DefenderReticle

@@ -34,10 +34,7 @@ let city;
 //------------------------------------------------------------------------------
 function Setup()
 {
-    // debugger;
-    Noise_Seed(10);
-    let v = Noise_Perlin2(100, 200)
-    Log(v)
+
     city = new City(0, Canvas_Edge_Bottom);
 
     defenderMissilesGen = new DefenderMissileGenerator(
@@ -66,8 +63,9 @@ function Draw(dt)
     enemyMissilesGen.update(dt);
     defenderReticle .update(dt);
 
-    if(defenderReticle.isShooting) {
+    if(defenderReticle.isShooting && defenderMissilesGen.canShoot()) {
         defenderMissilesGen.shoot(defenderReticle.position);
+        defenderReticle    .shoot();
     }
     defenderMissilesGen.update(dt);
 
