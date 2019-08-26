@@ -41,6 +41,13 @@ const DEFENDER_GENERATOR_MAX_ACTIVE_MISSILES = 3;
 const DEFENDER_GENERATOR_MAX_MISSILES        = 10;
 const DEFENDER_GENERATOR_MAX_SHOOT_TIME      = 0.8;
 
+// Building
+const BUILDING_WIDTH            = 15;
+const BUILDING_HEIGHT           = 25;
+const BUILDING_MIN_RANDOM_GAP_Y = 3;
+const BUILDING_MAX_RANDOM_GAP_Y = 15;
+const BUILDING_START_GAP_X      = 50;
+const BUILDING_GAP_X            = 80;
 
 //----------------------------------------------------------------------------//
 // Types                                                                      //
@@ -81,18 +88,20 @@ class EnemyMissile
         let cx = this.currPosition.x;
         let cy = this.currPosition.y;
 
-        Canvas_SetStrokeStyle("gray");
-        Canvas_SetStrokeSize(2);
-        Canvas_DrawLine(sx, sy, this.endPosition.x, this.endPosition.y);
+        Canvas_Push()
+            Canvas_SetStrokeStyle("gray");
+            Canvas_SetStrokeSize(2);
+            Canvas_DrawLine(sx, sy, this.endPosition.x, this.endPosition.y);
 
-        // Trail
-        Canvas_SetStrokeStyle("red");
-        Canvas_SetStrokeSize(4);
-        Canvas_DrawLine(sx, sy, cx, cy);
+            // Trail
+            Canvas_SetStrokeStyle("red");
+            Canvas_SetStrokeSize(4);
+            Canvas_DrawLine(sx, sy, cx, cy);
 
-        // Head
-        Canvas_SetFillStyle("white");
-        Canvas_FillCircle(cx, cy, 3);
+            // Head
+            Canvas_SetFillStyle("white");
+            Canvas_FillCircle(cx, cy, 3);
+        Canvas_Pop();
     } // draw
 
 
@@ -377,45 +386,117 @@ class Building
 
     draw()
     {
-        Canvas_SetFillStyle("green");
-        Canvas_FillRect(this.position.x, this.position.y, BUILDING_WIDTH, BUILDING_HEIGHT);
+        Canvas_Push();
+            Canvas_Translate(this.position.x, this.position.y);
+
+            Canvas_SetFillStyle("black");
+            Canvas_FillRect(
+                -BUILDING_WIDTH  / 2,
+                -BUILDING_HEIGHT / 2,
+                BUILDING_WIDTH,
+                BUILDING_HEIGHT
+            );
+
+            Canvas_SetStrokeStyle("magenta");
+            Canvas_SetStrokeSize(2);
+            Canvas_DrawRect(
+                -BUILDING_WIDTH  / 2,
+                -BUILDING_HEIGHT / 2,
+                BUILDING_WIDTH,
+                BUILDING_HEIGHT
+            );
+        Canvas_Pop();
     }
 }
 
-const BUILDING_WIDTH  = 20;
-const BUILDING_HEIGHT = 20;
-
 class City
 {
+
+    _createBuildings(building_y)
+    {
+        const BUILDINGS_COUNT = 6;
+        let half_buildings_count = BUILDINGS_COUNT / 2;
+
+        //
+        // Left Buildings.
+        for(let i = 0; i < half_buildings_count; ++i) {
+            let building_x = -(BUILDING_START_GAP_X) - (i * BUILDING_GAP_X + BUILDING_WIDTH / 2);
+            let gap_y      = Math_Random(BUILDING_MIN_RANDOM_GAP_Y, BUILDING_MAX_RANDOM_GAP_Y);
+            let b          = new Building(building_x, building_y - gap_y);
+
+            this.buildings.push(b);
+        }
+
+        //
+        // Right Buildings.
+        for(let i = 0; i < half_buildings_count; ++i) {
+            let building_x =  (BUILDING_START_GAP_X) + (i * BUILDING_GAP_X - BUILDING_WIDTH/2);
+            let gap_y      = Math_Random(BUILDING_MIN_RANDOM_GAP_Y, BUILDING_MAX_RANDOM_GAP_Y);
+            let b          = new Building(building_x, building_y - gap_y);
+
+            this.buildings.push(b);
+        }
+
+        this.buildings = this.buildings.sort(function(a, b) {
+            if(a.position.x < b.position.x) {
+                return -1;
+            } else {
+                return 1;
+            }
+        });
+    }
+
+    _createTerrain()
+    {
+        Noise_Seed(Math.random());
+
+        this.terrain.push(Canvas_Edge_Left);
+        this.terrain.push(Canvas_Edge_Bottom);
+
+        for(let i = 0; i < this.buildings.length; ++i) {
+            let building = this.buildings[i];
+
+            let building_left  = building.position.x - (BUILDING_WIDTH / 2);
+            let building_right = building.position.x + (BUILDING_WIDTH / 2);
+
+            let building_bottom = building.position.y + (BUILDING_HEIGHT / 2);
+            building_bottom += Math_RandomInt(-10, 0);
+
+
+            let last_terrain_x = Array_Get(this.terrain, -2);
+            let last_terrain_y = Array_Get(this.terrain, -1);
+            let distance = (building_left - last_terrain_x);
+            let steps    = 6;
+            let incr     = distance / steps;
+
+            for(let x = last_terrain_x + incr; x < building_left; x += incr) {
+                this.terrain.push(x);
+
+                let y = Noise_Perlin2(x, building_bottom) * 10 + building_bottom;
+                this.terrain.push(y);
+            }
+
+
+            this.terrain.push(building_left)
+            this.terrain.push(building_bottom);
+
+            this.terrain.push(building_right)
+            this.terrain.push(building_bottom);
+        }
+
+        this.terrain.push(Canvas_Edge_Right);
+        this.terrain.push(Canvas_Edge_Bottom);
+    }
+
     constructor(x, y)
     {
         this.shootingPosition = Vector_Create(x, y);
 
         this.buildings = [];
-        let START_GAP = 50;
-        let GAP = 50;
+        this.terrain   = [];
 
-        let building_y = (y - BUILDING_HEIGHT);
-
-        for(let i = 0; i < 3; ++i) {
-            let building_x = -(START_GAP) - (i * GAP + BUILDING_WIDTH/2);
-            let b = new Building(building_x, building_y);
-            this.buildings.push(b);
-        }
-
-        for(let i = 0; i < 3; ++i) {
-            let building_x =  (START_GAP) + (i * GAP - BUILDING_WIDTH/2);
-            let b = new Building(building_x, building_y);
-            this.buildings.push(b);
-        }
-
-        Noise_Seed(Math.random());
-        this.terrain = [];
-        let terrain_len = 2;
-        for(let i = 0; i < terrain_len + 1; ++i) {
-            let x = Noise_Perlin2(i * (Canvas_Width / terrain_len), 0);
-            this.terrain.push(x);
-        }
+        this._createBuildings(y - BUILDING_HEIGHT - 10);
+        this._createTerrain();
     }
 
     update(dt)
@@ -427,28 +508,17 @@ class City
 
     draw()
     {
+
+        Canvas_Push();
+        Canvas_SetStrokeStyle("cyan");
+        Canvas_SetStrokeSize(2);
+        Canvas_DrawShape(this.terrain, false);
+
+
+        Canvas_Pop();
+
         for(let i = 0, len = this.buildings.length; i < len; ++i) {
             this.buildings[i].draw();
-        }
-
-         for(let i = 0; i < this.terrain.length; i += 2) {
-            let h = 10;
-            let my = Canvas_Edge_Bottom - h;
-
-            let spacing = Canvas_Width / this.terrain.length;
-
-            let x1 = Canvas_Edge_Left + (i * spacing);
-            let y1 = my - this.terrain[i] * h;
-
-            let x2 = Canvas_Edge_Left + ((i + 1) * spacing);
-            let y2 = my - this.terrain[i+1] * h;
-
-            Canvas_SetStrokeStyle("yellow");
-            Canvas_SetStrokeSize(2);
-            // Canvas_DrawLine(x1, y1, x2, y2);
-
-            Canvas_DrawPoint(x1, y1, 3);
-            Canvas_DrawPoint(x2, y2, 3);
         }
     }
 
@@ -470,6 +540,10 @@ let city;
 //------------------------------------------------------------------------------
 function Setup()
 {
+    // debugger;
+    Noise_Seed(10);
+    let v = Noise_Perlin2(100, 200)
+    Log(v)
     city = new City(0, Canvas_Edge_Bottom);
 
     defenderMissilesGen = new DefenderMissileGenerator(
@@ -530,8 +604,6 @@ function Draw(dt)
     enemyMissilesGen   .draw();
     defenderMissilesGen.draw();
     defenderReticle    .draw();
-
-
 }
 
 
