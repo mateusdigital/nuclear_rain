@@ -17,16 +17,35 @@
 //---------------------------------------------------------------------------~//
 
 
+function ResetGame(level)
+{
+    levelInfo = new LevelInfo();
 
+    city = new City(0, Canvas_Edge_Bottom);
+
+    defenderMissilesMgr = new DefenderMissileManager(
+        city.shootingPosition.x,
+        city.shootingPosition.y
+    );
+
+    defenderReticle = new DefenderReticle(
+        defenderMissilesMgr.shootingPosition.x,
+        defenderMissilesMgr.shootingPosition.y - RETICLE_SHOOTING_POSITION_Y_GAP
+    );
+
+    enemyMissilesMgr = new EnemyMissileManager();
+    explosionMgr     = new ExplosionManager   ();
+}
 
 //----------------------------------------------------------------------------//
 // Globals                                                                    //
 //----------------------------------------------------------------------------//
-let enemyMissilesGen;
-let defenderReticle;
-let defenderMissilesGen;
 let city;
-let explosionManager;
+let explosionMgr;
+let enemyMissilesMgr;
+let defenderMissilesMgr;
+let defenderReticle;
+let levelInfo;
 
 //----------------------------------------------------------------------------//
 // Setup / Draw                                                               //
@@ -34,22 +53,7 @@ let explosionManager;
 //------------------------------------------------------------------------------
 function Setup()
 {
-
-    city = new City(0, Canvas_Edge_Bottom);
-
-    defenderMissilesGen = new DefenderMissileGenerator(
-        city.shootingPosition.x,
-        city.shootingPosition.y
-    );
-
-    defenderReticle = new DefenderReticle(
-        defenderMissilesGen.shootingPosition.x,
-        defenderMissilesGen.shootingPosition.y - RETICLE_SHOOTING_POSITION_Y_GAP
-    );
-
-    enemyMissilesGen = new EnemyMissileGenerator();
-
-    explosionManager = new ExplosionManager();
+    ResetGame();
 }
 
 
@@ -61,23 +65,24 @@ function Draw(dt)
 
     //
     // Update
-    city            .update(dt);
-    enemyMissilesGen.update(dt);
-    defenderReticle .update(dt);
-    explosionManager.update(dt);
+    city           .update(dt);
+    defenderReticle.update(dt);
 
-    if(defenderReticle.isShooting && defenderMissilesGen.canShoot()) {
-        defenderMissilesGen.shoot(defenderReticle.position);
+    enemyMissilesMgr.update(dt);
+    if(defenderReticle.isShooting && defenderMissilesMgr.canShoot()) {
+        defenderMissilesMgr.shoot(defenderReticle.position);
         defenderReticle    .shoot();
     }
-    defenderMissilesGen.update(dt);
+
+    defenderMissilesMgr.update(dt);
+    explosionMgr   .update(dt);
 
     //
     // Check Collisions
-    for(let i = 0; i < enemyMissilesGen.missiles.length; ++i) {
-        let enemy_missile = enemyMissilesGen.missiles[i];
-        for(let j = 0; j < explosionManager.playerExplosions.length; ++j) {
-            let player_explosion = explosionManager.playerExplosions[j];
+    for(let i = 0; i < enemyMissilesMgr.missiles.length; ++i) {
+        let enemy_missile = enemyMissilesMgr.missiles[i];
+        for(let j = 0; j < explosionMgr.playerExplosions.length; ++j) {
+            let player_explosion = explosionMgr.playerExplosions[j];
             let collided = Math_CircleContainsPoint(
                 player_explosion.position.x,
                 player_explosion.position.y,
@@ -87,12 +92,7 @@ function Draw(dt)
             );
 
             if(collided) {
-
-                enemyMissilesGen.killMissile(i);
-                explosionManager.addOtherExplosion(
-                    enemy_missile.currPosition.x,
-                    enemy_missile.currPosition.y
-                );
+                enemyMissilesMgr.killMissile(i);
             }
         }
     }
@@ -102,11 +102,10 @@ function Draw(dt)
     // Draw
     city.draw();
 
-    enemyMissilesGen   .draw();
-    defenderMissilesGen.draw();
+    enemyMissilesMgr   .draw();
+    defenderMissilesMgr.draw();
 
-    explosionManager.draw();
-
+    explosionMgr.draw();
     defenderReticle.draw();
 }
 

@@ -1,5 +1,85 @@
 // RR030307466BR
 
+//----------------------------------------------------------------------------//
+// Enemy Missile Manager                                                      //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
+class EnemyMissileManager
+{
+    //--------------------------------------------------------------------------
+    constructor()
+    {
+        this.missiles = [];
+
+        this.activeMissiles    = 0;
+        this.maxActiveMissiles = levelInfo.enemyMissileManager_maxActiveMissiles;
+
+        this.timeToSpawnMissile    = 0;
+        this.maxTimeToSpawnMissile = levelInfo.enemyMissileManager_maxTimeToSpawnMissile;
+    } // ctor
+
+    //--------------------------------------------------------------------------
+    killMissile(index)
+    {
+        this.missiles[index].done = true;
+        --this.activeMissiles;
+    } // killMissile
+
+    //--------------------------------------------------------------------------
+    update(dt)
+    {
+        //
+        // Remove killed missiles.
+        for(let i = this.missiles.length-1; i >= 0; --i) {
+            let m = this.missiles[i];
+            if(!m.done) {
+                continue;
+            }
+            Array_RemoveAt(this.missiles, i);
+            explosionMgr.addOtherExplosion(
+                m.currPosition.x,
+                m.currPosition.y
+            );
+        }
+
+        //
+        // Generate new missiles.
+        if(this.activeMissiles < this.maxActiveMissiles) {
+            this.timeToSpawnMissile -= dt;
+            if(this.timeToSpawnMissile <= 0) {
+                // Reset the spawn timer.
+                this.timeToSpawnMissile = Math_Random(0, this.maxTimeToSpawnMissile);
+
+                // Create a new missile.
+                this.missiles.push(new EnemyMissile());
+                ++this.activeMissiles;
+            }
+        }
+
+        //
+        // Update the current missiles.
+        for(let i = 0, len = this.missiles.length; i < len; ++i) {
+            this.missiles[i].update(dt);
+        }
+    } // update
+
+    //--------------------------------------------------------------------------
+    draw()
+    {
+        for(let i = 0, len = this.missiles.length; i < len; ++i) {
+            this.missiles[i].draw();
+        }
+    } // draw
+}; // EnemyMissileManager
+
+
+//----------------------------------------------------------------------------//
+// Enemy Missile                                                              //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
+const ENEMY_MISSILE_TRAIL_STROKE_SIZE = 3;
+const ENEMY_MISSILE_TRAIL_HEAD_RADIUS = 3;
+
 //------------------------------------------------------------------------------
 class EnemyMissile
 {
@@ -9,25 +89,33 @@ class EnemyMissile
         this.startPosition = this._randomizeStartPosition();
         this.endPosition   = this._randomizeEndPosition  ();
         this.currPosition  = Vector_Copy(this.startPosition);
-        this.angle         = this._randomizeAngle();
-        this.isDead        = false;
+
+        this.angle = this._randomizeAngle();
+        this.speed = levelInfo.enemyMissile_speed;
+
+        this.headColor  = levelInfo.enemyMissile_headColor;
+        this.trailColor = levelInfo.enemyMissile_trailColor;
+
+        this.done = false;
     } // ctor
 
     //--------------------------------------------------------------------------
     update(dt)
     {
-        if(this.isDead) {
+        if(this.done) {
            return;
         }
 
-        this.currPosition.x += Math_Cos(this.angle) * 20 * dt;
-        this.currPosition.y += Math_Sin(this.angle) * 20 * dt;
+        //
+        // Update Position.
+        this.currPosition.x += Math_Cos(this.angle) * this.speed * dt;
+        this.currPosition.y += Math_Sin(this.angle) * this.speed * dt;
     } // update
 
     //--------------------------------------------------------------------------
     draw()
     {
-        if(this.isDead) {
+        if(this.done) {
             return;
          }
 
@@ -37,18 +125,21 @@ class EnemyMissile
         let cy = this.currPosition.y;
 
         Canvas_Push()
+            // @TODO(stdmatt): Debug draw...
             Canvas_SetStrokeStyle("gray");
             Canvas_SetStrokeSize(2);
             Canvas_DrawLine(sx, sy, this.endPosition.x, this.endPosition.y);
 
+            //
             // Trail
-            Canvas_SetStrokeStyle("red");
-            Canvas_SetStrokeSize(4);
+            Canvas_SetStrokeStyle(this.trailColor);
+            Canvas_SetStrokeSize(ENEMY_MISSILE_TRAIL_STROKE_SIZE);
             Canvas_DrawLine(sx, sy, cx, cy);
 
+            //
             // Head
-            Canvas_SetFillStyle("white");
-            Canvas_FillCircle(cx, cy, 3);
+            Canvas_SetFillStyle(this.headColor);
+            Canvas_FillCircle(cx, cy, ENEMY_MISSILE_TRAIL_HEAD_RADIUS);
         Canvas_Pop();
     } // draw
 
@@ -75,5 +166,4 @@ class EnemyMissile
 
         return a;
     } // _randomizeAngle
-
 }; // class EnemyMissile

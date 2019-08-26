@@ -1,12 +1,17 @@
+//----------------------------------------------------------------------------//
+// Explosion Manager                                                          //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
 class ExplosionManager
 {
-
+    //--------------------------------------------------------------------------
     constructor()
     {
         this.playerExplosions = [];
         this.otherExplosions  = [];
-    }
+    } // ctor
 
+    //-------------------------------------------------------------------------
     addPlayerExplosion(x, y)
     {
         let e = new Explosion(
@@ -15,8 +20,9 @@ class ExplosionManager
             DEFENDER_MISSILE_EXPLOSION_DURATION
         );
         this.playerExplosions.push(e);
-    }
+    } // addPlayerExplosion
 
+    //--------------------------------------------------------------------------
     addOtherExplosion(x, y)
     {
         let e = new Explosion(
@@ -25,8 +31,9 @@ class ExplosionManager
             DEFENDER_MISSILE_EXPLOSION_DURATION / 2
         );
         this.otherExplosions.push(e);
-    }
+    } // addOtherExplosion
 
+    //--------------------------------------------------------------------------
     update(dt)
     {
         // Player
@@ -48,8 +55,9 @@ class ExplosionManager
                 Array_RemoveAt(this.otherExplosions, i);
             }
         }
-    }
+    } // update
 
+    //--------------------------------------------------------------------------
     draw()
     {
         // Player
@@ -63,12 +71,17 @@ class ExplosionManager
             let e = this.otherExplosions[i];
             e.draw();
         }
-    }
+    } // draw
 }; // class ExplosionManager
 
 
+//----------------------------------------------------------------------------//
+// Explosion                                                                  //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
 class Explosion
 {
+    //--------------------------------------------------------------------------
     constructor(x, y, minRadius, maxRadius, duration)
     {
         this.position = Vector_Create(x, y);
@@ -83,7 +96,7 @@ class Explosion
         this.done = false;
     } // ctor
 
-
+    //--------------------------------------------------------------------------
     update(dt)
     {
         if(this.done) {
@@ -115,13 +128,17 @@ class Explosion
     } // update
 
 
+    //--------------------------------------------------------------------------
     draw()
     {
+        if(this.done) {
+            return;
+        }
+
         Canvas_Push();
             Canvas_Translate(this.position.x, this.position.y);
             Canvas_SetFillStyle(this.color);
             Canvas_FillCircle(0, 0, this.radius);
         Canvas_Pop();
-    }
-
+    } // draw
 }; // class Explosion
