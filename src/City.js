@@ -253,32 +253,37 @@ class City
     {
         Noise_Seed(Math.random());
 
-        this.terrain.push(Canvas_Edge_Left);
-        this.terrain.push(Canvas_Edge_Bottom);
+        let building_left   = -1;
+        let building_right  = -1;
+        let building_bottom = -1;
+
+        const terrain_left_most_point   = Canvas_Edge_Left   - 20;
+        const terrain_right_most_point  = Canvas_Edge_Right  + 20;
+        const terrain_bottom_most_point = Canvas_Edge_Bottom + 20;
+        const number_of_steps           = 6;
+
+        this.terrain.push(terrain_left_most_point);
+        this.terrain.push(terrain_bottom_most_point);
 
         for(let i = 0; i < this.buildings.length; ++i) {
             let building = this.buildings[i];
 
-            let building_left  = building.position.x - (BUILDING_WIDTH / 2);
-            let building_right = building.position.x + (BUILDING_WIDTH / 2);
-
-            let building_bottom = building.position.y + (BUILDING_HEIGHT / 2);
+            // building pos.
+            building_left   = building.position.x - (BUILDING_WIDTH  / 2);
+            building_right  = building.position.x + (BUILDING_WIDTH  / 2);
+            building_bottom = building.position.y + (BUILDING_HEIGHT / 2);
             building_bottom += Math_RandomInt(-10, 0);
 
-
+            // terrain pos.
             let last_terrain_x = Array_Get(this.terrain, -2);
-            let last_terrain_y = Array_Get(this.terrain, -1);
-            let distance = (building_left - last_terrain_x);
-            let steps    = 6;
-            let incr     = distance / steps;
 
-            for(let x = last_terrain_x + incr; x < building_left; x += incr) {
-                this.terrain.push(x);
-
-                let y = Noise_Perlin2(x, building_bottom) * 10 + building_bottom;
-                this.terrain.push(y);
-            }
-
+            this._addPoints(
+                this.terrain,
+                last_terrain_x,
+                building_left,
+                number_of_steps,
+                building_bottom
+            );
 
             this.terrain.push(building_left)
             this.terrain.push(building_bottom);
@@ -287,7 +292,29 @@ class City
             this.terrain.push(building_bottom);
         }
 
-        this.terrain.push(Canvas_Edge_Right);
-        this.terrain.push(Canvas_Edge_Bottom);
+        this._addPoints(
+            this.terrain,
+            building_right,
+            terrain_right_most_point,
+            number_of_steps,
+            building_bottom
+        );
+
+        this.terrain.push(terrain_right_most_point);
+        this.terrain.push(terrain_bottom_most_point);
     } // _createTerrain
+
+    //--------------------------------------------------------------------------
+    _addPoints(arr, left, right, steps, baseY)
+    {
+        let distance = (right - left);
+        let incr     = distance / steps;
+
+        // Generate some extra points between those two points...
+        for(let x = left + incr; x < right; x += incr) {
+            let y = Noise_Perlin2(x, baseY) * 10 + baseY;
+            arr.push(x);
+            arr.push(y);
+        }
+    } // _addPoints
 }; // class City
