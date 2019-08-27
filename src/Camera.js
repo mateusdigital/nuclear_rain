@@ -15,6 +15,8 @@ class Camera
         this.playerExplosionShakes      = [];
         this.playerShootShakes          = [];
         this.addBuildingExplosionShakes = [];
+
+        this.color = chroma.hsl(0, 1, 1);
     } // ctor
 
     //--------------------------------------------------------------------------
@@ -51,6 +53,8 @@ class Camera
 
         this.currPosition.x = (x + v) * 5;
         this.currPosition.y = (y + v) * 5;
+
+        this.color = this.color.set('hsl.l', v / 4);
     } // update
 
     //--------------------------------------------------------------------------

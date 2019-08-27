@@ -11,11 +11,16 @@ class EnemyMissileManager
     {
         this.missiles = [];
 
+        this.shotMissiles    = 0;
+        this.maxShotMissiles = levelInfo.enemyMissileManager_maxShotMissiles;
+
         this.activeMissiles    = 0;
         this.maxActiveMissiles = levelInfo.enemyMissileManager_maxActiveMissiles;
 
         this.timeToSpawnMissile    = 0;
         this.maxTimeToSpawnMissile = levelInfo.enemyMissileManager_maxTimeToSpawnMissile;
+
+        this.done = false;
     } // ctor
 
     //--------------------------------------------------------------------------
@@ -31,17 +36,27 @@ class EnemyMissileManager
     //--------------------------------------------------------------------------
     update(dt)
     {
+        if(this.done) {
+            return;
+        }
+        if(this.activeMissiles == 0 && this.shotMissiles >= this.maxShotMissiles) {
+            this.done = true;
+        }
+
         //
         // Generate new missiles.
-        if(this.activeMissiles < this.maxActiveMissiles) {
+        if(this.activeMissiles < this.maxActiveMissiles && this.shotMissiles < this.maxShotMissiles) {
             this.timeToSpawnMissile -= dt;
             if(this.timeToSpawnMissile <= 0) {
                 // Reset the spawn timer.
                 this.timeToSpawnMissile = Math_Random(0, this.maxTimeToSpawnMissile);
 
+                Log("this.timeToSpawnMissile", this.timeToSpawnMissile);
+
                 // Create a new missile.
                 this.missiles.push(new EnemyMissile());
                 ++this.activeMissiles;
+                ++this.shotMissiles;
             }
         }
 

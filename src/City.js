@@ -86,8 +86,6 @@ class Building
     constructor(x, y)
     {
         this.position = Vector_Create(x, y);
-
-        this.color     = "magenta";
         this.particles = [];
 
         this.isBeingDestroyed = false;
@@ -101,9 +99,7 @@ class Building
             return;
         }
 
-        this.color            = "red";
         this.isBeingDestroyed = true;
-
         let len = Math_RandomInt(BUILDING_MIN_PARTICLES, BUILDING_MAX_PARTICLES);
         for(let i = 0; i < len; ++i) {
             let p = new BuildingParticle(this.position.x, this.position.y)
@@ -155,7 +151,7 @@ class Building
                 BUILDING_HEIGHT
             );
 
-            Canvas_SetStrokeStyle(this.color);
+            Canvas_SetStrokeStyle(levelInfo.buildingColor);
             Canvas_SetStrokeSize(2);
             Canvas_DrawRect(
                 -BUILDING_WIDTH  / 2,
@@ -203,7 +199,7 @@ class City
     draw()
     {
         Canvas_Push();
-            Canvas_SetStrokeStyle("cyan");
+            Canvas_SetStrokeStyle(levelInfo.terrainColor);
             Canvas_SetStrokeSize(2);
             Canvas_DrawShape(this.terrain, false);
         Canvas_Pop();

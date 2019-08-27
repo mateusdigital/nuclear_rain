@@ -1,26 +1,3 @@
-
-//------------------------------------------------------------------------------
-function ResetGame(level)
-{
-    levelInfo = new LevelInfo();
-
-    camera = new Camera();
-    city = new City(0, Canvas_Edge_Bottom);
-
-    defenderMissilesMgr = new DefenderMissileManager(
-        city.position.x,
-        city.position.y
-    );
-
-    defenderReticle = new DefenderReticle(
-        defenderMissilesMgr.shootingPosition.x,
-        defenderMissilesMgr.shootingPosition.y - RETICLE_SHOOTING_POSITION_Y_GAP
-    );
-
-    enemyMissilesMgr = new EnemyMissileManager();
-    explosionMgr     = new ExplosionManager   ();
-}
-
 //------------------------------------------------------------------------------
 function CheckCollisions_PlayerMissiles_Vs_EnemyMissile(index)
 {
@@ -81,7 +58,9 @@ function CheckCollisions_PlayerCity_Vs_EnemyMissile(index)
     }
 
 
-    building_to_be_destroyed.destroy();
+    if(building_to_be_destroyed) {
+        building_to_be_destroyed.destroy();
+    }
     enemyMissilesMgr.killMissile(index);
     camera.addBuildingExplosionShake();
 
@@ -104,6 +83,7 @@ function CheckCollisions()
     }
 }
 
+
 //------------------------------------------------------------------------------
 function CheckShooting()
 {
@@ -115,6 +95,29 @@ function CheckShooting()
     }
 }
 
+
+//------------------------------------------------------------------------------
+function ResetGame(level)
+{
+    levelInfo = new LevelInfo(1);
+
+    camera = new Camera();
+    city   = new City(0, Canvas_Edge_Bottom);
+
+    defenderMissilesMgr = new DefenderMissileManager(
+        city.position.x,
+        city.position.y
+    );
+
+    defenderReticle = new DefenderReticle(
+        defenderMissilesMgr.shootingPosition.x,
+        defenderMissilesMgr.shootingPosition.y - RETICLE_SHOOTING_POSITION_Y_GAP
+    );
+
+    enemyMissilesMgr = new EnemyMissileManager();
+    explosionMgr     = new ExplosionManager   ();
+}
+
 //------------------------------------------------------------------------------
 function CheckGameOver()
 {
@@ -123,6 +126,15 @@ function CheckGameOver()
     }
 }
 
+function CheckNextLevel()
+{
+    if(!enemyMissilesMgr.done) {
+        return;
+    }
+
+    levelInfo        = new LevelInfo(levelInfo.level + 1);
+    enemyMissilesMgr = new EnemyMissileManager();
+}
 
 //----------------------------------------------------------------------------//
 // Globals                                                                    //
@@ -148,7 +160,7 @@ function StateGame_Setup()
 //------------------------------------------------------------------------------
 function StateGame_Draw(dt)
 {
-    Canvas_ClearWindow("black");
+    Canvas_ClearWindow(camera.color);
 
     //
     // Update
@@ -162,6 +174,7 @@ function StateGame_Draw(dt)
     CheckShooting  ();
     CheckCollisions();
     CheckGameOver  ();
+    CheckNextLevel ();
 
     //
     // Draw

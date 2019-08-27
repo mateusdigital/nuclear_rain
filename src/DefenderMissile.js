@@ -2,9 +2,9 @@
 // Defender Missiles Manager                                                  //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-const DEFENDER_GENERATOR_MAX_MISSILES        = 1000
-const DEFENDER_GENERATOR_MAX_SHOOT_TIME      = 0.5;
-const DEFENDER_GENERATOR_MAX_ACTIVE_MISSILES = 3;
+const DEFENDER_GENERATOR_MAX_MISSILES        = Infinity;
+const DEFENDER_GENERATOR_MAX_SHOOT_TIME      = 0.3;
+const DEFENDER_GENERATOR_MAX_ACTIVE_MISSILES = 4;
 
 //------------------------------------------------------------------------------
 class DefenderMissileManager

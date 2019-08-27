@@ -15,7 +15,7 @@ function StateSplash_Setup()
 {
     // Missile Text
     {
-        let text = new Text("MISSILE", 50, "vector_battleregular");
+        let text = new Text("NUCLEAR", 50, "vector_battleregular");
         textMissile = new TextEffect(
             text,
             Vector_Create(0, Canvas_Edge_Top -text.height),
@@ -26,7 +26,7 @@ function StateSplash_Setup()
 
     // Missile Command
     {
-        let text = new Text("COMMAND", 50, "vector_battleregular");
+        let text = new Text("RAIN", 50, "vector_battleregular");
         let y = textMissile.endPosition.y + textMissile.text.height;
         textCommand = new TextEffect(
             text,
