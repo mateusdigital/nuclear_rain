@@ -16,7 +16,10 @@
 //   Just a simple sokoban game...                                            //
 //---------------------------------------------------------------------------~//
 
-
+//----------------------------------------------------------------------------//
+// Helper Functions                                                           //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
 function ResetGame(level)
 {
     levelInfo = new LevelInfo();
@@ -37,6 +40,99 @@ function ResetGame(level)
     enemyMissilesMgr = new EnemyMissileManager();
     explosionMgr     = new ExplosionManager   ();
 }
+
+//------------------------------------------------------------------------------
+function CheckCollisions_PlayerMissiles_Vs_EnemyMissile(index)
+{
+    let enemy_missile = enemyMissilesMgr.missiles[index];
+
+    for(let j = 0; j < explosionMgr.playerExplosions.length; ++j) {
+        let player_explosion = explosionMgr.playerExplosions[j];
+        let collided = Math_CircleContainsPoint(
+            player_explosion.position.x,
+            player_explosion.position.y,
+            player_explosion.radius,
+            enemy_missile.currPosition.x,
+            enemy_missile.currPosition.y
+        );
+
+        if(collided) {
+            enemyMissilesMgr.killMissile(index);
+            camera.addPlayerExplosionShake(player_explosion.radius);
+
+            return true;
+        }
+    }
+
+    return false;
+}
+
+//------------------------------------------------------------------------------
+function CheckCollisions_PlayerCity_Vs_EnemyMissile(index)
+{
+    let enemy_missile = enemyMissilesMgr.missiles[index];
+
+    let min_y = (city.position.y - BUILDING_HEIGHT - 10);
+    if(enemy_missile.currPosition.y < min_y) {
+        return false;
+    }
+
+    // Find the closest building...
+    let min_distance             = Infinity;
+    let building_to_be_destroyed = null;
+    for(let j = 0; j < city.buildings.length; ++j) {
+        let building = city.buildings[j];
+        if(building.isBeingDestroyed) {
+            continue;
+        }
+
+        let d = Math_DistanceSqr(
+            enemy_missile.currPosition.x,
+            enemy_missile.currPosition.y,
+            building.position.x,
+            building.position.y
+        );
+
+        if(d < min_distance) {
+            building_to_be_destroyed = building;
+            min_distance             = d;
+        }
+    }
+
+    building_to_be_destroyed.destroy();
+    enemyMissilesMgr.killMissile(index);
+    camera.addBuildingExplosionShake();
+
+    return true;
+}
+
+//------------------------------------------------------------------------------
+function CheckCollisions()
+{
+    for(let i = enemyMissilesMgr.missiles.length-1; i >= 0; --i) {
+        let collided = CheckCollisions_PlayerMissiles_Vs_EnemyMissile(i);
+        if(collided) {
+            continue;
+        }
+
+        collided = CheckCollisions_PlayerCity_Vs_EnemyMissile(i);
+        if(collided) {
+            continue;
+        }
+    }
+}
+
+//------------------------------------------------------------------------------
+function CheckShooting()
+{
+    if(defenderReticle.isShooting && defenderMissilesMgr.canShoot()) {
+        defenderMissilesMgr.shoot(defenderReticle.position);
+        defenderReticle    .shoot();
+
+        camera.addPlayerShootShake();
+    }
+}
+
 
 //----------------------------------------------------------------------------//
 // Globals                                                                    //
@@ -66,77 +162,15 @@ function Draw(dt)
 
     //
     // Update
-    city           .update(dt);
-    defenderReticle.update(dt);
-
-    enemyMissilesMgr.update(dt);
-    if(defenderReticle.isShooting && defenderMissilesMgr.canShoot()) {
-        defenderMissilesMgr.shoot(defenderReticle.position);
-        defenderReticle    .shoot();
-        camera.addPlayerShootShake();
-    }
-
+    city               .update(dt);
+    defenderReticle    .update(dt);
+    enemyMissilesMgr   .update(dt);
     defenderMissilesMgr.update(dt);
-    explosionMgr   .update(dt);
+    explosionMgr       .update(dt);
+    camera             .update(dt);
 
-
-    //
-    // Check Collisions
-    for(let i = enemyMissilesMgr.missiles.length-1; i >= 0; --i) {
-        let enemy_missile = enemyMissilesMgr.missiles[i];
-
-        // (Player Missiles vs Enemy Missiles)
-        for(let j = 0; j < explosionMgr.playerExplosions.length; ++j) {
-            let player_explosion = explosionMgr.playerExplosions[j];
-            let collided = Math_CircleContainsPoint(
-                player_explosion.position.x,
-                player_explosion.position.y,
-                player_explosion.radius,
-                enemy_missile.currPosition.x,
-                enemy_missile.currPosition.y
-            );
-
-            if(collided) {
-                enemyMissilesMgr.killMissile(i);
-                camera.addPlayerExplosionShake(player_explosion.radius);
-            }
-        }
-
-        // (Enemy Missiles vs Player Cities)
-        let min_y = (city.position.y - BUILDING_HEIGHT - 10);
-        if(enemy_missile.currPosition.y < min_y) {
-            continue;
-        }
-
-        // Find the closest building...
-        let min_distance             = Infinity;
-        let building_to_be_destroyed = null;
-        for(let j = 0; j < city.buildings.length; ++j) {
-            let building = city.buildings[j];
-            if(building.isBeingDestroyed) {
-                continue;
-            }
-
-            let d = Math_DistanceSqr(
-                enemy_missile.currPosition.x,
-                enemy_missile.currPosition.y,
-                building.position.x,
-                building.position.y
-            );
-            if(d < min_distance) {
-                building_to_be_destroyed = building;
-                min_distance             = d;
-            }
-        }
-
-        building_to_be_destroyed.destroy();
-        enemyMissilesMgr.killMissile(i);
-        camera.addBuildingExplosionShake();
-    }
-
-
-
-    camera.update(dt);
+    CheckShooting  ();
+    CheckCollisions();
 
     //
     // Draw
