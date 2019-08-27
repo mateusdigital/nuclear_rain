@@ -118,7 +118,9 @@ function CheckShooting()
 //------------------------------------------------------------------------------
 function CheckGameOver()
 {
-
+    if(city.done) {
+        ChangeStateToGameOver();
+    }
 }
 
 

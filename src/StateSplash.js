@@ -1,12 +1,11 @@
 
-
-
 //----------------------------------------------------------------------------//
 // Globals                                                                    //
 //----------------------------------------------------------------------------//
 let textMissile;
 let textCommand;
 let textPressAnyKey;
+
 
 //----------------------------------------------------------------------------//
 // Setup / Draw                                                               //
@@ -37,7 +36,7 @@ function StateSplash_Setup()
         );
     }
 
-    textPressAnyKey = new Text("Press Any Key", 15, "vector_battleregular");
+    textPressAnyKey = new Text("Press [SPACE] Key", 15, "vector_battleregular");
 }
 
 //------------------------------------------------------------------------------
@@ -54,5 +53,13 @@ function StateSplash_Draw(dt)
     if(textMissile.done && textCommand.done) {
         Canvas_SetFillStyle("white");
         textPressAnyKey.drawAt(0, Canvas_Edge_Bottom - 40);
+    }
+}
+
+//------------------------------------------------------------------------------
+function StateSplash_KeyDown(code)
+{
+    if(textMissile.done && textCommand.done && code == KEY_SPACE) {
+        ChangeStateToGame();
     }
 }
