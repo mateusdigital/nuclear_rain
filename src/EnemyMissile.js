@@ -51,8 +51,6 @@ class EnemyMissileManager
                 // Reset the spawn timer.
                 this.timeToSpawnMissile = Math_Random(0, this.maxTimeToSpawnMissile);
 
-                Log("this.timeToSpawnMissile", this.timeToSpawnMissile);
-
                 // Create a new missile.
                 this.missiles.push(new EnemyMissile());
                 ++this.activeMissiles;

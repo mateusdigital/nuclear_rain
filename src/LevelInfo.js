@@ -14,7 +14,8 @@ class LevelInfo
         this.enemyMissileManager_maxTimeToSpawnMissile = 3 - level / 10;
         this.enemyMissileManager_maxShotMissiles       = level;
 
-        this.enemyMissile_speed      = 50 + level;
+        this.enemyMissile_speed      = 50 + (level * (level / 3));
+        Log(this.enemyMissile_speed);
 
         this.enemyMissile_headColor  = RandomColor();
         this.enemyMissile_trailColor = RandomColor();
