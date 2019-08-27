@@ -73,16 +73,17 @@ function CheckCollisions_PlayerCity_Vs_EnemyMissile(index)
     let enemy_missile = enemyMissilesMgr.missiles[index];
 
     let min_y = (city.position.y - BUILDING_HEIGHT - 10);
-    if(enemy_missile.currPosition.y < min_y) {
+    if(enemy_missile.currPosition.y < min_y || city.done) {
         return false;
     }
 
     // Find the closest building...
     let min_distance             = Infinity;
     let building_to_be_destroyed = null;
+
     for(let j = 0; j < city.buildings.length; ++j) {
         let building = city.buildings[j];
-        if(building.isBeingDestroyed) {
+        if(building.isBeingDestroyed || building.done) {
             continue;
         }
 
@@ -98,6 +99,7 @@ function CheckCollisions_PlayerCity_Vs_EnemyMissile(index)
             min_distance             = d;
         }
     }
+
 
     building_to_be_destroyed.destroy();
     enemyMissilesMgr.killMissile(index);
@@ -133,16 +135,22 @@ function CheckShooting()
     }
 }
 
+//------------------------------------------------------------------------------
+function CheckGameOver()
+{
+
+}
+
 
 //----------------------------------------------------------------------------//
 // Globals                                                                    //
 //----------------------------------------------------------------------------//
+let levelInfo;
 let city;
 let explosionMgr;
 let enemyMissilesMgr;
 let defenderMissilesMgr;
 let defenderReticle;
-let levelInfo;
 let camera;
 
 
@@ -171,6 +179,7 @@ function Draw(dt)
 
     CheckShooting  ();
     CheckCollisions();
+    CheckGameOver  ();
 
     //
     // Draw
@@ -184,9 +193,8 @@ function Draw(dt)
 
         enemyMissilesMgr   .draw();
         defenderMissilesMgr.draw();
-
-        explosionMgr.draw();
-        defenderReticle.draw();
+        explosionMgr       .draw();
+        defenderReticle    .draw();
     Canvas_Pop();
 }
 

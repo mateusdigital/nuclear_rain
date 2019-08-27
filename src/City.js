@@ -1,28 +1,34 @@
+//----------------------------------------------------------------------------//
+// Building Particle                                                          //
+//----------------------------------------------------------------------------//
+BUILDING_PARTICLE_MIN_SPEED = 100;
+BUILDING_PARTICLE_MAX_SPEED = 200;
 
-// Building
-const BUILDING_WIDTH            = 15;
-const BUILDING_HEIGHT           = 25;
-const BUILDING_MIN_RANDOM_GAP_Y = 3;
-const BUILDING_MAX_RANDOM_GAP_Y = 15;
-const BUILDING_START_GAP_X      = 50;
-const BUILDING_GAP_X            = 80;
+BUILDING_PARTICLE_MIN_SIZE = 4;
+BUILDING_PARTICLE_MAX_SIZE = 20;
 
+BUILDING_PARTICLE_MIN_TIME_TO_DIE = 1;
+BUILDING_PARTICLE_MAX_TIME_TO_DIE = 3;
+
+//------------------------------------------------------------------------------
 class BuildingParticle
 {
+    //--------------------------------------------------------------------------
     constructor(x, y)
     {
         this.position = Vector_Create(x, y);
         this.angle    = Math_Random(0, MATH_2PI);
-        this.speed    = Math_Random(100, 200);
-        this.size     = Math_RandomInt(4, 10);
+        this.speed    = Math_Random(BUILDING_PARTICLE_MIN_SPEED, BUILDING_PARTICLE_MAX_SPEED);
+        this.size     = Math_RandomInt(BUILDING_PARTICLE_MIN_SIZE, BUILDING_PARTICLE_MAX_SIZE);
 
         this.timeToDie    = 0;
-        this.maxTimeToDie = Math_RandomInt(1, 2)
+        this.maxTimeToDie = Math_RandomInt(BUILDING_PARTICLE_MIN_TIME_TO_DIE, BUILDING_PARTICLE_MAX_TIME_TO_DIE)
         this.ratio        = 0;
 
         this.done = false;
-    }
+    } // ctor
 
+    //--------------------------------------------------------------------------
     update(dt)
     {
         if(this.done) {
@@ -40,8 +46,9 @@ class BuildingParticle
 
         this.ratio = this.timeToDie / this.maxTimeToDie;
         this.color = chroma.hsl(this.ratio * 360, 1, 0.5);
-    }
+    } // update
 
+    //--------------------------------------------------------------------------
     draw()
     {
         if(this.done) {
@@ -54,57 +61,86 @@ class BuildingParticle
             let size = this.size * (1 - this.ratio);
             Canvas_FillRect(0, 0, size, size);
         Canvas_Pop();
-    }
-}
+    } // draw
+}; // class BuildingParticle
 
 
+
+//----------------------------------------------------------------------------//
+// Building                                                                   //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
+const BUILDING_WIDTH            = 15;
+const BUILDING_HEIGHT           = 25;
+const BUILDING_MIN_RANDOM_GAP_Y = 3;
+const BUILDING_MAX_RANDOM_GAP_Y = 15;
+const BUILDING_START_GAP_X      = 50;
+const BUILDING_GAP_X            = 80;
+const BUILDING_MIN_PARTICLES    = 10;
+const BUILDING_MAX_PARTICLES    = 20;
+
+//------------------------------------------------------------------------------
 class Building
 {
+    //--------------------------------------------------------------------------
     constructor(x, y)
     {
         this.position = Vector_Create(x, y);
-        this.color = "magenta";
-        this.isBeingDestroyed = false;
-        this.particles = [];
-    }
 
+        this.color     = "magenta";
+        this.particles = [];
+
+        this.isBeingDestroyed = false;
+        this.done             = false;
+    } // ctor
+
+    //--------------------------------------------------------------------------
     destroy()
     {
-        if(this.isBeingDestroyed) {
+        if(this.isBeingDestroyed || this.done) {
             return;
         }
 
-        this.color = "red";
+        this.color            = "red";
         this.isBeingDestroyed = true;
 
-        let particles_len = Math_Random(10, 20);
-        for(let i = 0; i < particles_len; ++i) {
+        let len = Math_RandomInt(BUILDING_MIN_PARTICLES, BUILDING_MAX_PARTICLES);
+        for(let i = 0; i < len; ++i) {
             let p = new BuildingParticle(this.position.x, this.position.y)
             this.particles.push(p);
         }
-    }
+    } // destroy
 
+    //--------------------------------------------------------------------------
     update(dt)
     {
-        if(!this.isBeingDestroyed) {
+        if(!this.isBeingDestroyed || this.done) {
             return;
         }
 
         for(let i = this.particles.length-1; i >= 0; --i) {
             let p = this.particles[i];
             p.update(dt);
+
             if(p.done) {
                 Array_RemoveAt(this.particles, i);
+                this.done = this.particles.length == 0;
             }
         }
-    }
+    } // update
 
+    //--------------------------------------------------------------------------
     draw()
     {
+        if(this.done) {
+            return;
+        }
+
         if(this.isBeingDestroyed) {
             for(let i = 0; i < this.particles.length; ++i) {
                 this.particles[i].draw();
             }
+
             return;
         }
 
@@ -128,12 +164,56 @@ class Building
                 BUILDING_HEIGHT
             );
         Canvas_Pop();
-    }
-}
+    } // draw
+}; // class Building
 
 
+//----------------------------------------------------------------------------//
+// City                                                                       //
+//----------------------------------------------------------------------------//
 class City
 {
+    //--------------------------------------------------------------------------
+    constructor(x, y)
+    {
+        this.position = Vector_Create(x, y);
+
+        this.buildings = [];
+        this.terrain   = [];
+        this.done      = false;
+
+        this._createBuildings(y - BUILDING_HEIGHT - 10);
+        this._createTerrain();
+    } // ctor
+
+    //--------------------------------------------------------------------------
+    update(dt)
+    {
+        for(let i = this.buildings.length-1; i >= 0; --i) {
+            let b = this.buildings[i];
+            b.update(dt);
+            if(b.done) {
+                Array_RemoveAt(this.buildings,i);
+                this.done = this.buildings.length == 0;
+            }
+        }
+    } // update
+
+    //--------------------------------------------------------------------------
+    draw()
+    {
+        Canvas_Push();
+            Canvas_SetStrokeStyle("cyan");
+            Canvas_SetStrokeSize(2);
+            Canvas_DrawShape(this.terrain, false);
+        Canvas_Pop();
+
+        for(let i = 0, len = this.buildings.length; i < len; ++i) {
+            this.buildings[i].draw();
+        }
+    }// draw
+
+    //--------------------------------------------------------------------------
     _createBuildings(building_y)
     {
         const BUILDINGS_COUNT = 6;
@@ -166,8 +246,9 @@ class City
                 return 1;
             }
         });
-    }
+    } // _createBuildings
 
+    //--------------------------------------------------------------------------
     _createTerrain()
     {
         Noise_Seed(Math.random());
@@ -208,40 +289,5 @@ class City
 
         this.terrain.push(Canvas_Edge_Right);
         this.terrain.push(Canvas_Edge_Bottom);
-    }
-
-    constructor(x, y)
-    {
-        this.position = Vector_Create(x, y);
-
-        this.buildings = [];
-        this.terrain   = [];
-
-        this._createBuildings(y - BUILDING_HEIGHT - 10);
-        this._createTerrain();
-    }
-
-    update(dt)
-    {
-        for(let i = 0, len = this.buildings.length; i < len; ++i) {
-            this.buildings[i].update(dt);
-        }
-    }
-
-    draw()
-    {
-
-        Canvas_Push();
-        Canvas_SetStrokeStyle("cyan");
-        Canvas_SetStrokeSize(2);
-        Canvas_DrawShape(this.terrain, false);
-
-
-        Canvas_Pop();
-
-        for(let i = 0, len = this.buildings.length; i < len; ++i) {
-            this.buildings[i].draw();
-        }
-    }
-
+    } // _createTerrain
 }; // class City
