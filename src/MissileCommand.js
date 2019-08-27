@@ -20,6 +20,21 @@
 // Helper Functions                                                           //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
+async function
+LoadFont(fontFace, path)
+{
+    let font_face = new FontFace(
+        fontFace,
+        "url(" + path + ")"
+    );
+    Log("before await");
+    await font_face.load();
+    document.fonts.add(font_face);
+    Log("after await");
+}
+
+
+//------------------------------------------------------------------------------
 function ResetGame(level)
 {
     levelInfo = new LevelInfo();
