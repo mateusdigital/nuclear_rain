@@ -71,7 +71,7 @@ let keyDownFunc     = null;
 //------------------------------------------------------------------------------
 async function Setup()
 {
-    await LoadFont("vector_battleregular", "./css/vectorb-webfont.woff");
+    await LoadFont("vector_battleregular", "./res/vectorb-webfont.woff");
     resourcesLoaded = true;
 
     ChangeStateToSplash();
