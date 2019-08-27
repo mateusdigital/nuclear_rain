@@ -27,11 +27,10 @@ function StateSplash_Setup()
     // Missile Command
     {
         let text = new Text("RAIN", 50, "vector_battleregular");
-        let y = textMissile.endPosition.y + textMissile.text.height;
         textCommand = new TextEffect(
             text,
             Vector_Create(0, Canvas_Edge_Bottom + text.height),
-            Vector_Create(0, y),
+            Vector_Create(0, 50),
             1
         );
     }
