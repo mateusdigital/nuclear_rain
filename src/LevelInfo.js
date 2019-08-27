@@ -1,3 +1,9 @@
+function RandomColor()
+{
+    let h = Math_RandomInt(0, 360);
+    return chroma.hsl(h, 1.0, 0.5);
+}
+
 class LevelInfo
 {
     constructor(level)
@@ -10,10 +16,10 @@ class LevelInfo
 
         this.enemyMissile_speed      = 50 + level;
 
-        this.enemyMissile_headColor  = chroma.random();
-        this.enemyMissile_trailColor = chroma.random();
+        this.enemyMissile_headColor  = RandomColor();
+        this.enemyMissile_trailColor = RandomColor();
 
-        this.terrainColor  = chroma.random();
-        this.buildingColor = chroma.random();
+        this.terrainColor  = RandomColor();
+        this.buildingColor = RandomColor();
     }
 }
