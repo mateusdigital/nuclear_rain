@@ -160,6 +160,8 @@ function CheckGameOver()
 //----------------------------------------------------------------------------//
 // Globals                                                                    //
 //----------------------------------------------------------------------------//
+
+let loaded = false;
 let levelInfo;
 let city;
 let explosionMgr;
@@ -173,14 +175,20 @@ let camera;
 // Setup / Draw                                                               //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-function Setup()
+async function Setup()
 {
+    await LoadFont("vector_battleregular", "./css/vectorb-webfont.woff");
+    loaded = true;
+    f = new Text("Missile", 40, "vector_battleregular");
     ResetGame();
 }
 
 //------------------------------------------------------------------------------
 function Draw(dt)
 {
+    if(!loaded) {
+        return;
+    }
     Canvas_ClearWindow("black");
 
     //
