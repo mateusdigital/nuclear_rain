@@ -12,8 +12,9 @@ class Camera
         this.startPosition = Vector_Create(0, 0);
         this.currPosition  = Vector_Copy(this.startPosition);
 
-        this.playerExplosionShakes = [];
-        this.playerShootShakes     = [];
+        this.playerExplosionShakes      = [];
+        this.playerShootShakes          = [];
+        this.addBuildingExplosionShakes = [];
     } // ctor
 
     //--------------------------------------------------------------------------
@@ -31,13 +32,25 @@ class Camera
     } // addPlayerExplosionShake
 
     //--------------------------------------------------------------------------
+    addBuildingExplosionShake()
+    {
+        let s = new Shake(5.0, AMPLITUDE * 5);
+        this.addBuildingExplosionShakes.push(s);
+    } // addBuildingExplosionShake
+
+    //--------------------------------------------------------------------------
     update(dt)
     {
-        let x = this._updateShakes(this.playerExplosionShakes, dt);
-        this.currPosition.x = x * 5;
+        let x = 0;
+        let y = 0;
+        let v = 0;
 
-        let y = this._updateShakes(this.playerShootShakes, dt);
-        this.currPosition.y = y * 5;
+        x = this._updateShakes(this.playerExplosionShakes,      dt);
+        y = this._updateShakes(this.playerShootShakes,          dt);
+        v = this._updateShakes(this.addBuildingExplosionShakes, dt);
+
+        this.currPosition.x = (x + v) * 5;
+        this.currPosition.y = (y + v) * 5;
     } // update
 
     //--------------------------------------------------------------------------

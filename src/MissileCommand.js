@@ -131,6 +131,7 @@ function Draw(dt)
 
         building_to_be_destroyed.destroy();
         enemyMissilesMgr.killMissile(i);
+        camera.addBuildingExplosionShake();
     }
 
 
