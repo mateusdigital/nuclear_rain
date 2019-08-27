@@ -33,11 +33,25 @@ LoadFont(fontFace, path)
     Log("after await");
 }
 
+function ChangeStateToSplash()
+{
+    drawFunc = StateSplash_Draw;
+    StateSplash_Setup();
+}
+
+function ChangeStateToGame()
+{
+    drawFunc = StateGame_Draw;
+    StateGame_Setup();
+}
+
+
 //----------------------------------------------------------------------------//
 // Globals                                                                    //
 //----------------------------------------------------------------------------//
 let resourcesLoaded = false;
 let drawFunc        = null;
+
 
 //----------------------------------------------------------------------------//
 // Setup / Draw                                                               //
@@ -47,8 +61,7 @@ async function Setup()
 {
     await LoadFont("vector_battleregular", "./css/vectorb-webfont.woff");
     resourcesLoaded = true;
-    drawFunc = StateSplash_Draw;
-    StateSplash_Setup();
+    ChangeStateToSplash();
 }
 
 //------------------------------------------------------------------------------
@@ -65,6 +78,9 @@ function Draw(dt)
 //----------------------------------------------------------------------------//
 function KeyDown(code)
 {
+    if(drawFunc == StateSplash_Draw) {
+        ChangeStateToGame();
+    }
 }
 
 
