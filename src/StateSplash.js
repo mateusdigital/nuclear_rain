@@ -4,7 +4,8 @@
 //----------------------------------------------------------------------------//
 let textMissile;
 let textCommand;
-let textPressAnyKey;
+let keyboardText;
+let mouseText;
 
 
 //----------------------------------------------------------------------------//
@@ -35,7 +36,8 @@ function StateSplash_Setup()
         );
     }
 
-    textPressAnyKey = new Text("Press [SPACE] Key", 15, "vector_battleregular");
+    keyboardText = new Text("[Keyboard] Press space", 15, "vector_battleregular");
+    mouseText    = new Text("[Mouse] Click any button", 15, "vector_battleregular");
 }
 
 //------------------------------------------------------------------------------
@@ -51,7 +53,11 @@ function StateSplash_Draw(dt)
 
     if(textMissile.done && textCommand.done) {
         Canvas_SetFillStyle("white");
-        textPressAnyKey.drawAt(0, Canvas_Edge_Bottom - 40);
+        let y = Canvas_Edge_Bottom - 50;
+        keyboardText.drawAt(0, y);
+
+        y +=  keyboardText.height + 10;
+        mouseText.drawAt(0, y);
     }
 }
 
@@ -59,6 +65,16 @@ function StateSplash_Draw(dt)
 function StateSplash_KeyDown(code)
 {
     if(textMissile.done && textCommand.done && code == KEY_SPACE) {
+        inputMethod = INPUT_METHOD_KEYBOARD;
+        ChangeStateToGame();
+    }
+}
+
+//------------------------------------------------------------------------------
+function StateSplash_MouseClick(code)
+{
+    if(textMissile.done) {
+        inputMethod = INPUT_METHOD_MOUSE;
         ChangeStateToGame();
     }
 }

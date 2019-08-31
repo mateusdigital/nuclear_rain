@@ -31,24 +31,28 @@ class DefenderReticle
     update(dt)
     {
         //
-        // Movement
-        if(Keyboard[KEY_RIGHT]) {
-            this.position.x += RETICLE_MOVE_SPEED * dt;
-        }
-        if(Keyboard[KEY_LEFT]) {
-            this.position.x -= RETICLE_MOVE_SPEED * dt;
-        }
+        // Input
+        if(inputMethod == INPUT_METHOD_KEYBOARD) {
+            if(Keyboard[KEY_RIGHT]) {
+                this.position.x += RETICLE_MOVE_SPEED * dt;
+            }
+            if(Keyboard[KEY_LEFT]) {
+                this.position.x -= RETICLE_MOVE_SPEED * dt;
+            }
 
-        if(Keyboard[KEY_DOWN]) {
-            this.position.y += RETICLE_MOVE_SPEED * dt;
-        }
-        if(Keyboard[KEY_UP]) {
-            this.position.y -= RETICLE_MOVE_SPEED * dt;
-        }
+            if(Keyboard[KEY_DOWN]) {
+                this.position.y += RETICLE_MOVE_SPEED * dt;
+            }
+            if(Keyboard[KEY_UP]) {
+                this.position.y -= RETICLE_MOVE_SPEED * dt;
+            }
 
-        //
-        // Shooting
-        this.isShooting = Keyboard[KEY_SPACE];
+            this.isShooting = Keyboard[KEY_SPACE];
+        } else if(inputMethod == INPUT_METHOD_MOUSE) {
+            this.position.x = Mouse_World_X;
+            this.position.y = Mouse_World_Y;
+            this.isShooting = Mouse_IsClicked;
+        }
 
         //
         // Bounds Checking
