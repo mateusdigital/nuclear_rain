@@ -47,7 +47,23 @@ function StateGameOver_Draw(dt)
 //------------------------------------------------------------------------------
 function StateGameOver_KeyDown(code)
 {
+    if(inputMethod != INPUT_METHOD_KEYBOARD) {
+        return;
+    }
+
     if(textWeLost.done && code == KEY_SPACE) {
+        ChangeStateToSplash();
+    }
+}
+
+//------------------------------------------------------------------------------
+function StateGameOver_MouseClick(code)
+{
+    if(inputMethod != INPUT_METHOD_MOUSE) {
+        return;
+    }
+
+    if(textWeLost.done) {
         ChangeStateToSplash();
     }
 }

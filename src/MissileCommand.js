@@ -36,26 +36,38 @@ LoadFont(fontFace, path)
 //------------------------------------------------------------------------------
 function ChangeStateToSplash()
 {
-    drawFunc    = StateSplash_Draw;
-    keyDownFunc = StateSplash_KeyDown;
+    inputMethod = INPUT_METHOD_INVALID;
+
+    drawFunc       = StateSplash_Draw;
+    keyDownFunc    = StateSplash_KeyDown;
+    mouseClickFunc = StateSplash_MouseClick;
     StateSplash_Setup();
 }
 
 //------------------------------------------------------------------------------
 function ChangeStateToGame()
 {
-    drawFunc    = StateGame_Draw;
-    keyDownFunc = null;
+    drawFunc       = StateGame_Draw;
+    keyDownFunc    = null;
+    mouseClickFunc = null;
     StateGame_Setup();
 }
 
 //------------------------------------------------------------------------------
 function ChangeStateToGameOver()
 {
-    drawFunc    = StateGameOver_Draw;
-    keyDownFunc = StateGameOver_KeyDown;
+    drawFunc       = StateGameOver_Draw;
+    keyDownFunc    = StateGameOver_KeyDown;
+    mouseClickFunc = StateGameOver_MouseClick;
     StateGameOver_Setup();
 }
+
+//----------------------------------------------------------------------------//
+// Constants                                                                  //
+//----------------------------------------------------------------------------//
+const INPUT_METHOD_INVALID  = -1;
+const INPUT_METHOD_KEYBOARD =  0;
+const INPUT_METHOD_MOUSE    =  1;
 
 //----------------------------------------------------------------------------//
 // Globals                                                                    //
@@ -63,6 +75,8 @@ function ChangeStateToGameOver()
 let resourcesLoaded = false;
 let drawFunc        = null;
 let keyDownFunc     = null;
+let mouseClickFunc  = null;
+let inputMethod     = INPUT_METHOD_INVALID;
 
 
 //----------------------------------------------------------------------------//
@@ -94,6 +108,14 @@ function KeyDown(code)
 {
     if(keyDownFunc != null) {
         keyDownFunc(code);
+    }
+}
+
+//------------------------------------------------------------------------------
+function MouseClick()
+{
+    if(mouseClickFunc != null) {
+        mouseClickFunc();
     }
 }
 
