@@ -99,6 +99,7 @@ function CheckShooting()
 //------------------------------------------------------------------------------
 function ResetGame(level)
 {
+    keyboard = [];
     levelInfo = new LevelInfo(1);
 
     camera = new Camera();
@@ -146,6 +147,7 @@ let enemyMissilesMgr;
 let defenderMissilesMgr;
 let defenderReticle;
 let camera;
+let keyboard = [];
 
 
 //----------------------------------------------------------------------------//
@@ -192,3 +194,18 @@ function StateGame_Draw(dt)
         defenderReticle    .draw();
     Canvas_Pop();
 }
+
+//------------------------------------------------------------------------------
+function StateGame_KeyDown(code)
+{
+    keyboard[code] = true;
+    console.log("code down", code)
+}
+
+//------------------------------------------------------------------------------
+function StateGame_KeyUp(code)
+{
+    keyboard[code] = false;
+    console.log("code up", code)
+}
+

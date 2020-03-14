@@ -1,6 +1,6 @@
 function RandomColor()
 {
-    let h = Math_RandomInt(0, 360);
+    let h = Random_Int(0, 360);
     return chroma.hsl(h, 1.0, 0.5);
 }
 
@@ -14,8 +14,7 @@ class LevelInfo
         this.enemyMissileManager_maxTimeToSpawnMissile = 3 - level / 10;
         this.enemyMissileManager_maxShotMissiles       = level;
 
-        this.enemyMissile_speed      = 50 + (level * (level / 3));
-        Log(this.enemyMissile_speed);
+        this.enemyMissile_speed  = 50 + (level * (level / 3));
 
         this.enemyMissile_headColor  = RandomColor();
         this.enemyMissile_trailColor = RandomColor();

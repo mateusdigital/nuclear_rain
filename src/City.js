@@ -17,12 +17,12 @@ class BuildingParticle
     constructor(x, y)
     {
         this.position = Vector_Create(x, y);
-        this.angle    = Math_Random(0, MATH_2PI);
-        this.speed    = Math_Random(BUILDING_PARTICLE_MIN_SPEED, BUILDING_PARTICLE_MAX_SPEED);
-        this.size     = Math_RandomInt(BUILDING_PARTICLE_MIN_SIZE, BUILDING_PARTICLE_MAX_SIZE);
+        this.angle    = Random_Number(0, MATH_2PI);
+        this.speed    = Random_Number(BUILDING_PARTICLE_MIN_SPEED, BUILDING_PARTICLE_MAX_SPEED);
+        this.size     = Random_Int(BUILDING_PARTICLE_MIN_SIZE, BUILDING_PARTICLE_MAX_SIZE);
 
         this.timeToDie    = 0;
-        this.maxTimeToDie = Math_RandomInt(BUILDING_PARTICLE_MIN_TIME_TO_DIE, BUILDING_PARTICLE_MAX_TIME_TO_DIE)
+        this.maxTimeToDie = Random_Int(BUILDING_PARTICLE_MIN_TIME_TO_DIE, BUILDING_PARTICLE_MAX_TIME_TO_DIE)
         this.ratio        = 0;
 
         this.done = false;
@@ -100,7 +100,7 @@ class Building
         }
 
         this.isBeingDestroyed = true;
-        let len = Math_RandomInt(BUILDING_MIN_PARTICLES, BUILDING_MAX_PARTICLES);
+        let len = Random_Int(BUILDING_MIN_PARTICLES, BUILDING_MAX_PARTICLES);
         for(let i = 0; i < len; ++i) {
             let p = new BuildingParticle(this.position.x, this.position.y)
             this.particles.push(p);
@@ -219,7 +219,7 @@ class City
         // Left Buildings.
         for(let i = 0; i < half_buildings_count; ++i) {
             let building_x = -(BUILDING_START_GAP_X) - (i * BUILDING_GAP_X + BUILDING_WIDTH / 2);
-            let gap_y      = Math_Random(BUILDING_MIN_RANDOM_GAP_Y, BUILDING_MAX_RANDOM_GAP_Y);
+            let gap_y      = Random_Number(BUILDING_MIN_RANDOM_GAP_Y, BUILDING_MAX_RANDOM_GAP_Y);
             let b          = new Building(building_x, building_y - gap_y);
 
             this.buildings.push(b);
@@ -229,7 +229,7 @@ class City
         // Right Buildings.
         for(let i = 0; i < half_buildings_count; ++i) {
             let building_x =  (BUILDING_START_GAP_X) + (i * BUILDING_GAP_X - BUILDING_WIDTH/2);
-            let gap_y      = Math_Random(BUILDING_MIN_RANDOM_GAP_Y, BUILDING_MAX_RANDOM_GAP_Y);
+            let gap_y      = Random_Number(BUILDING_MIN_RANDOM_GAP_Y, BUILDING_MAX_RANDOM_GAP_Y);
             let b          = new Building(building_x, building_y - gap_y);
 
             this.buildings.push(b);
@@ -268,7 +268,7 @@ class City
             building_left   = building.position.x - (BUILDING_WIDTH  / 2);
             building_right  = building.position.x + (BUILDING_WIDTH  / 2);
             building_bottom = building.position.y + (BUILDING_HEIGHT / 2);
-            building_bottom += Math_RandomInt(-10, 0);
+            building_bottom += Random_Int(-10, 0);
 
             // terrain pos.
             let last_terrain_x = Array_Get(this.terrain, -2);

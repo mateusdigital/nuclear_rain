@@ -16,51 +16,6 @@
 //   Just a simple sokoban game...                                            //
 //---------------------------------------------------------------------------~//
 
-//----------------------------------------------------------------------------//
-// Helper Functions                                                           //
-//----------------------------------------------------------------------------//
-//------------------------------------------------------------------------------
-async function
-LoadFont(fontFace, path)
-{
-    let font_face = new FontFace(
-        fontFace,
-        "url(" + path + ")"
-    );
-    Log("before await");
-    await font_face.load();
-    document.fonts.add(font_face);
-    Log("after await");
-}
-
-//------------------------------------------------------------------------------
-function ChangeStateToSplash()
-{
-    inputMethod = INPUT_METHOD_INVALID;
-
-    drawFunc       = StateSplash_Draw;
-    keyDownFunc    = StateSplash_KeyDown;
-    mouseClickFunc = StateSplash_MouseClick;
-    StateSplash_Setup();
-}
-
-//------------------------------------------------------------------------------
-function ChangeStateToGame()
-{
-    drawFunc       = StateGame_Draw;
-    keyDownFunc    = null;
-    mouseClickFunc = null;
-    StateGame_Setup();
-}
-
-//------------------------------------------------------------------------------
-function ChangeStateToGameOver()
-{
-    drawFunc       = StateGameOver_Draw;
-    keyDownFunc    = StateGameOver_KeyDown;
-    mouseClickFunc = StateGameOver_MouseClick;
-    StateGameOver_Setup();
-}
 
 //----------------------------------------------------------------------------//
 // Constants                                                                  //
@@ -75,8 +30,90 @@ const INPUT_METHOD_MOUSE    =  1;
 let resourcesLoaded = false;
 let drawFunc        = null;
 let keyDownFunc     = null;
+let keyUpFunc       = null;
 let mouseClickFunc  = null;
 let inputMethod     = INPUT_METHOD_INVALID;
+let is_first_click  = true;
+
+
+//----------------------------------------------------------------------------//
+// Helper Functions                                                           //
+//----------------------------------------------------------------------------//
+//------------------------------------------------------------------------------
+async function
+LoadFont(fontFace, path)
+{
+    let font_face = new FontFace(
+        fontFace,
+        "url(" + path + ")"
+    );
+    console.log("before await");
+    await font_face.load();
+    document.fonts.add(font_face);
+    console.log("after await");
+}
+
+//------------------------------------------------------------------------------
+function ChangeStateToSplash()
+{
+    inputMethod = INPUT_METHOD_INVALID;
+
+    drawFunc       = StateSplash_Draw;
+    keyDownFunc    = StateSplash_KeyDown;
+    keyUpFunc      = null;
+    mouseClickFunc = StateSplash_MouseClick;
+
+    StateSplash_Setup();
+}
+
+//------------------------------------------------------------------------------
+function ChangeStateToGame()
+{
+    drawFunc       = StateGame_Draw;
+    keyDownFunc    = StateGame_KeyDown;
+    keyUpFunc      = StateGame_KeyUp;
+    mouseClickFunc = null;
+
+    StateGame_Setup();
+}
+
+//------------------------------------------------------------------------------
+function ChangeStateToGameOver()
+{
+    drawFunc       = StateGameOver_Draw;
+    keyDownFunc    = StateGameOver_KeyDown;
+    keyUpFunc      = null;
+    mouseClickFunc = StateGameOver_MouseClick;
+
+    StateGameOver_Setup();
+}
+
+//------------------------------------------------------------------------------
+function InitializeCanvas()
+{
+    //
+    // Configure the Canvas.
+    const parent        = document.getElementById("canvas_div");
+    const parent_width  = parent.clientWidth;
+    const parent_height = parent.clientHeight;
+
+    const max_side = Math_Max(parent_width, parent_height);
+    const min_side = Math_Min(parent_width, parent_height);
+
+    const ratio = min_side / max_side;
+
+    // Landscape
+    if(parent_width > parent_height) {
+        Canvas_CreateCanvas(800, 800 * ratio, parent);
+    }
+    // Portrait
+    else {
+        Canvas_CreateCanvas(800 * ratio, 800, parent);
+    }
+
+    Canvas.style.width  = "100%";
+    Canvas.style.height = "100%";
+}
 
 
 //----------------------------------------------------------------------------//
@@ -85,10 +122,16 @@ let inputMethod     = INPUT_METHOD_INVALID;
 //------------------------------------------------------------------------------
 async function Setup()
 {
+    Random_Seed(null);
+    InitializeCanvas();
+    Input_InstallBasicMouseHandler   (Canvas);
+    Input_InstallBasicKeyboardHandler();
+
     await LoadFont("vector_battleregular", "./res/vectorb-webfont.woff");
     resourcesLoaded = true;
 
     ChangeStateToSplash();
+    Canvas_Start();
 }
 
 //------------------------------------------------------------------------------
@@ -97,6 +140,7 @@ function Draw(dt)
     if(resourcesLoaded && drawFunc != null) {
         drawFunc(dt);
     }
+    Mouse_IsClicked = false;
 }
 
 
@@ -104,16 +148,30 @@ function Draw(dt)
 // Input                                                                      //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-function KeyDown(code)
+function OnKeyDown(event)
 {
+    const code = event.keyCode;
     if(keyDownFunc != null) {
         keyDownFunc(code);
     }
 }
 
-//------------------------------------------------------------------------------
-function MouseClick()
+function OnKeyUp(event)
 {
+    const code = event.keyCode;
+    if(keyUpFunc != null) {
+        keyUpFunc(code);
+    }
+}
+
+
+//------------------------------------------------------------------------------
+function OnMouseClick()
+{
+    if(is_first_click) {
+        is_first_click = false;
+        return;
+    }
     if(mouseClickFunc != null) {
         mouseClickFunc();
     }
@@ -123,10 +181,4 @@ function MouseClick()
 //----------------------------------------------------------------------------//
 // Entry Point                                                                //
 //----------------------------------------------------------------------------//
-Canvas_Setup({
-    main_title        : "Simple Snake",
-    main_date         : "Aug 10, 2019",
-    main_version      : "v0.0.1",
-    main_instructions : "<br><b>arrow keys</b> to move the snake<br><b>R</b> to start a new game.",
-    main_link: "<a href=\"http://stdmatt.com/demos/startfield.html\">More info</a>"
-});
+Setup();

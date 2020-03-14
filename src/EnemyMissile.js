@@ -49,7 +49,7 @@ class EnemyMissileManager
             this.timeToSpawnMissile -= dt;
             if(this.timeToSpawnMissile <= 0) {
                 // Reset the spawn timer.
-                this.timeToSpawnMissile = Math_Random(0, this.maxTimeToSpawnMissile);
+                this.timeToSpawnMissile = Random_Number(0, this.maxTimeToSpawnMissile);
 
                 // Create a new missile.
                 this.missiles.push(new EnemyMissile());
@@ -149,14 +149,14 @@ class EnemyMissile
     //--------------------------------------------------------------------------
     _randomizeStartPosition()
     {
-        let x = Math_RandomInt(Canvas_Edge_Left, Canvas_Edge_Right);
+        let x = Random_Int(Canvas_Edge_Left, Canvas_Edge_Right);
         return Vector_Create(x, Canvas_Edge_Top);
     } // _randomizeStartPosition
 
     //--------------------------------------------------------------------------
     _randomizeEndPosition()
     {
-        let x = Math_RandomInt(Canvas_Edge_Left, Canvas_Edge_Right);
+        let x = Random_Int(Canvas_Edge_Left, Canvas_Edge_Right);
         return Vector_Create(x, Canvas_Edge_Bottom);
     } // _randomizeEndPosition
 

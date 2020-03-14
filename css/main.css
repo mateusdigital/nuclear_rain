@@ -1,0 +1,24 @@
+img.center
+ {
+  display       : block;
+  margin-left   : auto;
+  margin-right  : auto;
+  margin-top    : 20px;
+  margin-bottom : 20px;
+}
+
+#canvas_div
+{
+    position:fixed;
+    top   : 0%;
+    bottom: 0%;
+    right : 0%;
+    left  : 0%;
+
+    /* box-shadow:2px 2px 8px 0px #EFE9D3; */
+    text-align: center;
+}
+
+body {
+  background-color: #FEF7E1;
+}

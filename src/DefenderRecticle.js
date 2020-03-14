@@ -33,24 +33,24 @@ class DefenderReticle
         //
         // Input
         if(inputMethod == INPUT_METHOD_KEYBOARD) {
-            if(Keyboard[KEY_RIGHT]) {
+            if(keyboard[KEY_RIGHT]) {
                 this.position.x += RETICLE_MOVE_SPEED * dt;
             }
-            if(Keyboard[KEY_LEFT]) {
+            if(keyboard[KEY_LEFT]) {
                 this.position.x -= RETICLE_MOVE_SPEED * dt;
             }
 
-            if(Keyboard[KEY_DOWN]) {
+            if(keyboard[KEY_DOWN]) {
                 this.position.y += RETICLE_MOVE_SPEED * dt;
             }
-            if(Keyboard[KEY_UP]) {
+            if(keyboard[KEY_UP]) {
                 this.position.y -= RETICLE_MOVE_SPEED * dt;
             }
 
-            this.isShooting = Keyboard[KEY_SPACE];
+            this.isShooting = keyboard[KEY_SPACE];
         } else if(inputMethod == INPUT_METHOD_MOUSE) {
-            this.position.x = Mouse_World_X;
-            this.position.y = Mouse_World_Y;
+            this.position.x = Mouse_X - Canvas_Half_Width;
+            this.position.y = Mouse_Y - Canvas_Half_Height;
             this.isShooting = Mouse_IsClicked;
         }
 
