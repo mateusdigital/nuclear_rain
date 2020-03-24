@@ -18,9 +18,7 @@
 //----------------------------------------------------------------------------//
 // Constants                                                                  //
 //----------------------------------------------------------------------------//
-const NUCLEAR_RAIN_VERSION_MAJOR = 1;
-const NUCLEAR_RAIN_VERSION_MINOR = 0;
-const NUCLEAR_RAIN_VERSION_BABY  = 0;
+const NUCLEAR_RAIN_VERSION = "1.0.1";
 
 //----------------------------------------------------------------------------//
 // Public Functions                                                           //
@@ -28,9 +26,5 @@ const NUCLEAR_RAIN_VERSION_BABY  = 0;
 //------------------------------------------------------------------------------
 function GetVersion()
 {
-    return String_Cat(
-        NUCLEAR_RAIN_VERSION_MAJOR, ".",
-        NUCLEAR_RAIN_VERSION_MINOR, ".",
-        NUCLEAR_RAIN_VERSION_BABY
-    );
+    return NUCLEAR_RAIN_VERSION;
 }
