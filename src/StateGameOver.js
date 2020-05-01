@@ -31,7 +31,7 @@ function StateGameOver_Setup()
 {
     // WeLost Text
     {
-        let text = new Text("We Lost", 50, "vector_battleregular");
+        let text = new Text("We Lost", BIG_TEXT_FONT_SIZE, BIG_TEXT_FONT_NAME);
         textWeLost = new TextEffect(
             text,
             Vector_Create(0, Canvas_Edge_Top -text.height),
@@ -42,8 +42,8 @@ function StateGameOver_Setup()
 
     textMsg = new Text(
         "In a nuclear war there are no winners",
-        15,
-        "vector_battleregular"
+        SMALL_TEXT_FONT_SIZE,
+        SMALL_TEXT_FONT_NAME
     );
 }
 

@@ -33,7 +33,7 @@ function StateSplash_Setup()
 {
     // Missile Text
     {
-        let text = new Text("NUCLEAR", 50, "vector_battleregular");
+        let text = new Text("NUCLEAR", BIG_TEXT_FONT_SIZE, BIG_TEXT_FONT_NAME);
         textMissile = new TextEffect(
             text,
             Vector_Create(0, Canvas_Edge_Top -text.height),
@@ -44,7 +44,7 @@ function StateSplash_Setup()
 
     // Missile Command
     {
-        let text = new Text("RAIN", 50, "vector_battleregular");
+        let text = new Text("RAIN", BIG_TEXT_FONT_SIZE, BIG_TEXT_FONT_NAME);
         textCommand = new TextEffect(
             text,
             Vector_Create(0, Canvas_Edge_Bottom + text.height),
@@ -53,8 +53,8 @@ function StateSplash_Setup()
         );
     }
 
-    keyboardText = new Text("[Keyboard] Press space", 15, "vector_battleregular");
-    mouseText    = new Text("[Mouse] Click any button", 15, "vector_battleregular");
+    keyboardText = new Text("[Keyboard] Press space",   SMALL_TEXT_FONT_SIZE, SMALL_TEXT_FONT_NAME);
+    mouseText    = new Text("[Mouse] Click any button", SMALL_TEXT_FONT_SIZE, SMALL_TEXT_FONT_NAME);
 }
 
 //------------------------------------------------------------------------------

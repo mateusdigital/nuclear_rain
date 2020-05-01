@@ -35,6 +35,13 @@ let inputMethod     = INPUT_METHOD_INVALID;
 let is_first_click  = true;
 
 
+let BIG_TEXT_FONT_NAME   = null;
+let SMALL_TEXT_FONT_NAME = null;
+
+let BIG_TEXT_FONT_SIZE   = null;
+let SMALL_TEXT_FONT_SIZE = null;
+
+
 //----------------------------------------------------------------------------//
 // Helper Functions                                                           //
 //----------------------------------------------------------------------------//
@@ -100,19 +107,22 @@ function InitializeCanvas()
     const min_side = Math_Min(parent_width, parent_height);
 
     const ratio = min_side / max_side;
-
+    const DESIGN_WIDTH  = 1000;
+    const DESIGN_HEIGHT = 1000;
     // Landscape
     if(parent_width > parent_height) {
-        Canvas_CreateCanvas(800, 800 * ratio, parent);
+        Canvas_CreateCanvas(DESIGN_WIDTH, DESIGN_WIDTH* ratio, parent);
     }
     // Portrait
     else {
-        Canvas_CreateCanvas(800 * ratio, 800, parent);
+        Canvas_CreateCanvas(DESIGN_WIDTH * ratio, DESIGN_HEIGHT, parent);
     }
 
     Canvas.style.width  = "100%";
     Canvas.style.height = "100%";
 }
+
+
 
 
 //----------------------------------------------------------------------------//
@@ -123,10 +133,19 @@ async function Setup()
 {
     Random_Seed(null);
     InitializeCanvas();
-    Input_InstallBasicMouseHandler   (Canvas);
+
+    Input_InstallBasicMouseHandler(Canvas);
     Input_InstallBasicKeyboardHandler();
 
-    await LoadFont("vector_battleregular", "./res/vectorb-webfont.woff");
+    await LoadFont('edit_undo_line_brkregular',  './res/edunline-webfont.woff2' )
+    await LoadFont('digitalixregular',           './res/digitalix-webfont.woff2')
+
+    BIG_TEXT_FONT_NAME   = "edit_undo_line_brkregular";
+    SMALL_TEXT_FONT_NAME = "digitalixregular";
+
+    BIG_TEXT_FONT_SIZE   = 80;
+    SMALL_TEXT_FONT_SIZE = 12;
+
     resourcesLoaded = true;
 
     ChangeStateToSplash();
