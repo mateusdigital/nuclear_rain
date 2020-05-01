@@ -60,6 +60,19 @@ LoadFont(fontFace, path)
 }
 
 //------------------------------------------------------------------------------
+function HideMousePointer()
+{
+
+    document.getElementById("canvas_div").style.cursor = "none";
+}
+
+//------------------------------------------------------------------------------
+function ShowMousePointer ()
+{
+    document.getElementById("canvas_div").style.cursor = "auto";
+}
+
+//------------------------------------------------------------------------------
 function ChangeStateToSplash()
 {
     inputMethod = INPUT_METHOD_INVALID;
@@ -69,6 +82,7 @@ function ChangeStateToSplash()
     keyUpFunc      = null;
     mouseClickFunc = StateSplash_MouseClick;
 
+    ShowMousePointer ()
     StateSplash_Setup();
 }
 
@@ -80,7 +94,8 @@ function ChangeStateToGame()
     keyUpFunc      = StateGame_KeyUp;
     mouseClickFunc = null;
 
-    StateGame_Setup();
+    HideMousePointer()
+    StateGame_Setup ();
 }
 
 //------------------------------------------------------------------------------
@@ -91,6 +106,7 @@ function ChangeStateToGameOver()
     keyUpFunc      = null;
     mouseClickFunc = StateGameOver_MouseClick;
 
+    ShowMousePointer   ()
     StateGameOver_Setup();
 }
 
