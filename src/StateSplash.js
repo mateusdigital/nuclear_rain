@@ -23,6 +23,7 @@ let textMissile;
 let textCommand;
 let keyboardText;
 let mouseText;
+let versionText;
 
 
 //----------------------------------------------------------------------------//
@@ -55,6 +56,9 @@ function StateSplash_Setup()
 
     keyboardText = new Text("[Keyboard] Press space",   SMALL_TEXT_FONT_SIZE, SMALL_TEXT_FONT_NAME);
     mouseText    = new Text("[Mouse] Click any button", SMALL_TEXT_FONT_SIZE, SMALL_TEXT_FONT_NAME);
+
+    const version = String_Cat("v", NUCLEAR_RAIN_VERSION, " - stdmatt MMXX - GPLv3");
+    versionText = new Text(version, 10, "Arial");
 }
 
 //------------------------------------------------------------------------------
@@ -70,11 +74,14 @@ function StateSplash_Draw(dt)
 
     if(textMissile.done && textCommand.done) {
         Canvas_SetFillStyle("white");
-        let y = Canvas_Edge_Bottom - 50;
+        let y = Canvas_Edge_Bottom - 80;
         keyboardText.drawAt(0, y);
 
-        y +=  keyboardText.height + 10;
+        y += keyboardText.height + 10;
         mouseText.drawAt(0, y);
+
+        y += mouseText.height + 15;
+        versionText.drawAt(0, y);
     }
 }
 

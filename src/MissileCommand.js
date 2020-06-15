@@ -125,6 +125,7 @@ function InitializeCanvas()
     const ratio = min_side / max_side;
     const DESIGN_WIDTH  = 1000;
     const DESIGN_HEIGHT = 1000;
+
     // Landscape
     if(parent_width > parent_height) {
         Canvas_CreateCanvas(DESIGN_WIDTH, DESIGN_WIDTH* ratio, parent);
