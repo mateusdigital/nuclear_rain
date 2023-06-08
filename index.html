@@ -1,75 +1,91 @@
-<!-- ~--------------------------------------------------------------------------- -->
-<!--                         _      _                 _   _                  -->
-<!--                     ___| |_ __| |_ __ ___   __ _| |_| |_                -->
-<!--                    / __| __/ _` | '_ ` _ \ / _` | __| __|               -->
-<!--                    \__ \ || (_| | | | | | | (_| | |_| |_                -->
-<!--                    |___/\__\__,_|_| |_| |_|\__,_|\__|\__|               -->
+<!-- ~---------------------------------------------------------------------- -->
+<!--                                *       +                                -->
+<!--                          '                  |                           -->
+<!--                      ()    .-.,="``"=.    - o -                         -->
+<!--                            '=/_       \     |                           -->
+<!--                         *   |  '=._    |                                -->
+<!--                              \     `=./`,        '                      -->
+<!--                           .   '=.__.=' `='      *                       -->
+<!--                  +                         +                            -->
+<!--                       O      *        '       .                         -->
 <!--                                                                         -->
 <!--   File      : index.html                                                -->
 <!--   Project   : nuclear_rain                                              -->
-<!--   Date      : Aug 25, 2019                                              -->
+<!--   Date      : 2019-08-25                                                -->
 <!--   License   : GPLv3                                                     -->
-<!--   Author    : stdmatt <stdmatt@pixelwizards.io>                         -->
-<!--   Copyright : stdmatt 2019, 2020                                        -->
+<!--   Author    : mateus.digital <hello@mateus.digital>                     -->
+<!--   Copyright : mateus.digital - 2019 - 2023                              -->
 <!--                                                                         -->
 <!--   Description :                                                         -->
 <!--                                                                         -->
-<!-- ---------------------------------------------------------------------------~ -->
+<!--                                                                         -->
+<!-- ----------------------------------------------------------------------~ -->
 <!DOCTYPE html>
 <html>
+
 <head>
     <link href="./css/main.css" rel="stylesheet" type="text/css">
+    <title>Nuclear Rain - _version_ - mateus.digital</title>
 </head>
 
+<!-- version: _version_  build: _build_ date: _date_ -->
 
 <body>
-<!-- ----------------------------------------------------------------------- -->
-<!-- Canvas                                                                  -->
-<!-- ----------------------------------------------------------------------- -->
-<div id="canvas_div">
-</div>
+    <script>
+        // Page is embedded
+        if (window !== window.top) {
+            document.body.style.backgroundColor = "transparent";
+        }
+    </script>
 
-<!-- ----------------------------------------------------------------------- -->
-<!-- Scripts                                                                 -->
-<!-- ----------------------------------------------------------------------- -->
-<!-- Libs -->
-<script type="text/javascript" src="./libs/mcow_js_core/libs/third_party/chroma.js"></script>
-<script type="text/javascript" src="./libs/mcow_js_core/libs/third_party/perlin.js"></script>
-<script type="text/javascript" src="./libs/mcow_js_core/libs/third_party/tween.umd.js"></script>
-<script type="text/javascript" src="./libs/mcow_js_core/src/Array.js"></script>
-<script type="text/javascript" src="./libs/mcow_js_core/src/Input.js"></script>
-<script type="text/javascript" src="./libs/mcow_js_core/src/Math.js"></script>
-<script type="text/javascript" src="./libs/mcow_js_core/src/Noise.js"></script>
-<script type="text/javascript" src="./libs/mcow_js_core/src/Random.js"></script>
-<script type="text/javascript" src="./libs/mcow_js_core/src/Shake.js"></script>
-<script type="text/javascript" src="./libs/mcow_js_core/src/String.js"></script>
-<script type="text/javascript" src="./libs/mcow_js_core/src/Timer.js"></script>
-<script type="text/javascript" src="./libs/mcow_js_core/src/Tween.js"></script>
-<script type="text/javascript" src="./libs/mcow_js_core/src/Utils.js"></script>
-<script type="text/javascript" src="./libs/mcow_js_core/src/Vector.js"></script>
-<script type="text/javascript" src="./libs/mcow_js_core/src/Window.js"></script>
+    <!-- ----------------------------------------------------------------------- -->
+    <!-- Canvas                                                                  -->
+    <!-- ----------------------------------------------------------------------- -->
+    <div id="canvas_div">
+    </div>
 
-<script type="text/javascript" src="./libs/mcow_js_canvas/src/Canvas.js"></script>
 
-<!-- Game -->
-<script type="text/javascript" src="./src/Version.js"></script>
-<script type="text/javascript" src="./src/Text.js"></script>
+    <!-- ----------------------------------------------------------------------- -->
+    <!-- Scripts                                                                 -->
+    <!-- ----------------------------------------------------------------------- -->
+    <!-- Libs -->
+    <script type="text/javascript" src="./libs/mcow_js_core/libs/third_party/chroma.js"></script>
+    <script type="text/javascript" src="./libs/mcow_js_core/libs/third_party/perlin.js"></script>
+    <script type="text/javascript" src="./libs/mcow_js_core/libs/third_party/tween.umd.js"></script>
+    <script type="text/javascript" src="./libs/mcow_js_core/src/Array.js"></script>
+    <script type="text/javascript" src="./libs/mcow_js_core/src/Input.js"></script>
+    <script type="text/javascript" src="./libs/mcow_js_core/src/Math.js"></script>
+    <script type="text/javascript" src="./libs/mcow_js_core/src/Noise.js"></script>
+    <script type="text/javascript" src="./libs/mcow_js_core/src/Random.js"></script>
+    <script type="text/javascript" src="./libs/mcow_js_core/src/Shake.js"></script>
+    <script type="text/javascript" src="./libs/mcow_js_core/src/String.js"></script>
+    <script type="text/javascript" src="./libs/mcow_js_core/src/Timer.js"></script>
+    <script type="text/javascript" src="./libs/mcow_js_core/src/Tween.js"></script>
+    <script type="text/javascript" src="./libs/mcow_js_core/src/Utils.js"></script>
+    <script type="text/javascript" src="./libs/mcow_js_core/src/Vector.js"></script>
+    <script type="text/javascript" src="./libs/mcow_js_core/src/Window.js"></script>
 
-<script type="text/javascript" src="./src/Camera.js"></script>
-<script type="text/javascript" src="./src/Shake.js"></script>
-<script type="text/javascript" src="./src/LevelInfo.js"></script>
+    <script type="text/javascript" src="./libs/mcow_js_canvas/src/Canvas.js"></script>
 
-<script type="text/javascript" src="./src/City.js"></script>
-<script type="text/javascript" src="./src/DefenderMissile.js"></script>
-<script type="text/javascript" src="./src/EnemyMissile.js"></script>
-<script type="text/javascript" src="./src/Explosion.js"></script>
-<script type="text/javascript" src="./src/DefenderRecticle.js"></script>
+    <!-- Game -->
+    <script type="text/javascript" src="./src/Version.js"></script>
+    <script type="text/javascript" src="./src/Text.js"></script>
 
-<script type="text/javascript" src="./src/StateSplash.js"></script>
-<script type="text/javascript" src="./src/StateGame.js"></script>
-<script type="text/javascript" src="./src/StateGameOver.js"></script>
+    <script type="text/javascript" src="./src/Camera.js"></script>
+    <script type="text/javascript" src="./src/Shake.js"></script>
+    <script type="text/javascript" src="./src/LevelInfo.js"></script>
 
-<script type="text/javascript" src="./src/MissileCommand.js"></script>
+    <script type="text/javascript" src="./src/City.js"></script>
+    <script type="text/javascript" src="./src/DefenderMissile.js"></script>
+    <script type="text/javascript" src="./src/EnemyMissile.js"></script>
+    <script type="text/javascript" src="./src/Explosion.js"></script>
+    <script type="text/javascript" src="./src/DefenderRecticle.js"></script>
+
+    <script type="text/javascript" src="./src/StateSplash.js"></script>
+    <script type="text/javascript" src="./src/StateGame.js"></script>
+    <script type="text/javascript" src="./src/StateGameOver.js"></script>
+
+    <script type="text/javascript" src="./src/MissileCommand.js"></script>
 
 
 </html>
