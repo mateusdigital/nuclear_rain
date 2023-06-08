@@ -28,11 +28,11 @@ class LevelInfo
     {
         this.level = level;
 
-        this.enemyMissileManager_maxActiveMissiles     = 3 + level;
-        this.enemyMissileManager_maxTimeToSpawnMissile = 3 - level / 10;
-        this.enemyMissileManager_maxShotMissiles       = level;
+        this.enemyMissileManager_maxActiveMissiles     = 6 + level;
+        this.enemyMissileManager_maxTimeToSpawnMissile = 4 - level / 10;
+        this.enemyMissileManager_maxShotMissiles       = level * 1.5;
 
-        this.enemyMissile_speed  = 50 + (level * (level / 3));
+        this.enemyMissile_speed  = 80 + (level * (level / 5));
 
         this.enemyMissile_headColor  = RandomColor();
         this.enemyMissile_trailColor = RandomColor();

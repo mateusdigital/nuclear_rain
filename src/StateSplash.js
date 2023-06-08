@@ -32,13 +32,15 @@ let versionText;
 //------------------------------------------------------------------------------
 function StateSplash_Setup()
 {
+    const offset = -60;
+
     // Missile Text
     {
         let text = new Text("NUCLEAR", BIG_TEXT_FONT_SIZE, BIG_TEXT_FONT_NAME);
         textMissile = new TextEffect(
             text,
             Vector_Create(0, Canvas_Edge_Top -text.height),
-            Vector_Create(0, -text.height / 2),
+            Vector_Create(0, -text.height / 2 + offset),
             1
         );
     }
@@ -49,7 +51,7 @@ function StateSplash_Setup()
         textCommand = new TextEffect(
             text,
             Vector_Create(0, Canvas_Edge_Bottom + text.height),
-            Vector_Create(0, 50),
+            Vector_Create(0, 50 + offset),
             1
         );
     }

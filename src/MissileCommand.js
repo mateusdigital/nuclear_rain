@@ -41,7 +41,6 @@ let SMALL_TEXT_FONT_NAME = null;
 let BIG_TEXT_FONT_SIZE   = null;
 let SMALL_TEXT_FONT_SIZE = null;
 
-
 //----------------------------------------------------------------------------//
 // Helper Functions                                                           //
 //----------------------------------------------------------------------------//
@@ -110,36 +109,82 @@ function ChangeStateToGameOver()
     StateGameOver_Setup();
 }
 
+
+
 //------------------------------------------------------------------------------
-function InitializeCanvas()
-{
-    //
-    // Configure the Canvas.
-    const parent        = document.getElementById("canvas_div");
-    const parent_width  = parent.clientWidth;
-    const parent_height = parent.clientHeight;
+let originalWidth  = 800;
+let originalHeight = 600;
 
-    const max_side = Math_Max(parent_width, parent_height);
-    const min_side = Math_Min(parent_width, parent_height);
+//------------------------------------------------------------------------------
+function InitializeCanvas(){
+    const canvas = document.getElementById("canvas_div");
 
-    const ratio = min_side / max_side;
-    const DESIGN_WIDTH  = 1000;
-    const DESIGN_HEIGHT = 1000;
+    // Less area - let just be the size.
+    const area = originalWidth * originalHeight;
+    const window_area = innerWidth * innerHeight;
 
-    // Landscape
-    if(parent_width > parent_height) {
-        Canvas_CreateCanvas(DESIGN_WIDTH, DESIGN_WIDTH* ratio, parent);
+    console.log("area : ", area);
+    console.log("warea: ", window_area);
+
+    if(window_area < area) {
+        originalWidth  = Math.max(innerWidth, originalWidth);
+        originalHeight = Math.max(innerHeight, originalHeight);
+        console.log("Less area");
+    } else {
+        const ratio_w = innerWidth / originalWidth;
+        const ratio_h = innerHeight / originalHeight;
+
+        const new_w = originalWidth * ratio_w;
+        const new_h = originalHeight * ratio_h;
+
+        originalWidth = Math.min(new_h, originalWidth);
+        originalHeight = Math.min(new_h, originalHeight);
+
+        console.log("Scaled");
     }
-    // Portrait
-    else {
-        Canvas_CreateCanvas(DESIGN_WIDTH * ratio, DESIGN_HEIGHT, parent);
-    }
 
-    Canvas.style.width  = "100%";
-    Canvas.style.height = "100%";
+    Canvas_CreateCanvas(originalWidth, originalHeight, canvas);
+    resizeCanvas();
+
+    window.addEventListener('resize', resizeCanvas);
 }
 
+function resizeCanvas(){
+    const canvas = document.querySelector("canvas");
 
+    const parentWidth  = canvas.parentElement.clientWidth;
+    const parentHeight = Math.min(canvas.parentElement.clientHeight, window.innerHeight);
+
+    const fitSize = scale_to_fit(
+        originalWidth,
+        originalHeight,
+        parentWidth   - 40,
+        parentHeight  - 40
+        );
+
+    // css
+    canvas.style.width  = fitSize.width  + "px";
+    canvas.style.height = fitSize.height + "px";
+
+    console.log(fitSize, window.innerWidth, window.innerHeight);
+}
+
+function scale_to_fit(originalWidth, originalHeight, parentWidth, parentHeight) {
+    const aspectRatio          = originalWidth / originalHeight;
+    const containerAspectRatio = parentWidth / parentHeight;
+
+    let width, height;
+
+    if (containerAspectRatio > aspectRatio) {
+        width = parentHeight * aspectRatio;
+        height = parentHeight;
+    } else {
+        width = parentWidth;
+        height = parentWidth / aspectRatio;
+    }
+
+    return { width, height };
+}
 
 
 //----------------------------------------------------------------------------//

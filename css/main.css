@@ -6,26 +6,45 @@
 /*                   |___/\__\__,_|_| |_| |_|\__,_|\__|\__|                   */
 /*                                                                            */
 /*  File      : main.css                                                      */
-/*  Project   : nuclear_rain                                                  */
-/*  Date      : Mar 14, 2020                                                  */
+/*  Project   : snake                                                         */
+/*  Date      : Mar 27, 2020                                                  */
 /*  License   : GPLv3                                                         */
 /*  Author    : stdmatt <stdmatt@pixelwizards.io>                             */
-/*  Copyright : stdmatt 2020                                                  */
+/*  Copyright : stdmatt 2020, 2023                                            */
 /*                                                                            */
 /*  Description :                                                             */
-/*                                                                            */
 /*---------------------------------------------------------------------------~*/
-#canvas_div {
-  position: fixed;
-  top:     0%;
-  bottom:  0%;
-  right:   0%;
-  left:    0%;
+
+*::before,
+*::after,
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 body {
-  background-color: black;
-  
+  background-color: rgb(20, 20, 20);
   margin: 0;
   padding: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#canvas_div {
+  padding: 20px;
+
+  margin-left:  auto;
+  margin-right: auto;
+
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+canvas {
+  display: block;
+  margin-left:  auto;
+  margin-right: auto;
+  border-radius: 10px;
 }
