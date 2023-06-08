@@ -1,33 +1,42 @@
 # Nuclear Rain
 
-**Made with <3 by [stdmatt](http://stdmatt.com).**
+**Made with <3 by [mateus.digital](https://mateus.digital).**
 
-<!--  -->
-## Description:
 
 <p align="center">
-    <img src="./res/nuclear_rain.gif"/>
+    <img style="border-radius: 10px;" src="./res/readme_game.gif"/>
 </p>
 
+## Description:
 
-A tribute to the classic and amazing Atari's Missle Command!
+Nuclear Rain is remake of the classic Missile Command.
 
-You can play it [here](https://stdmatt.com/deploy/games/nuclear_rain/index.html)
+You can [play it online](https://mateus.digital/nuclear_rain).
+
+<br>
 
 As usual, you are **very welcomed** to **share** and **hack** it.
 
-<!--  -->
-## Dependencies:
 
-* [mcow_js_core](https://stdmatt.com/projects/libs/js/mcow_js_core.html)
-* [mcow_js_canvas](https://stdmatt.com/projects/libs/js/mcow_js_canvas.html)
+## Building
 
-<!--  -->
+
+```bash
+git clone https://github.com/mateus.digital/nuclear_rain
+cd nuclear_rain
+./scripts/build-static.sh      ## Builds the webpage for the game.
+```
+## Thanks to:
+
+I used a lot of free and open resources, for which I'm most grateful!
+
+- [chroma.js](https://www.vis4.net/chromajs/)
+
 ## License:
 
 This software is released under [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html).
 
-<!--  -->
+
 ## Others:
 
-There's more FLOSS things at [stdmatt.com](https://stdmatt.com) :)
+There's more FLOSS things at [mateus.digital](https://mateus.digital) :)
