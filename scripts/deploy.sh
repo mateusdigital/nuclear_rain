@@ -10,13 +10,12 @@
 ##                 +                         +                                ##
 ##                      O      *        '       .                             ##
 ##                                                                            ##
-##  File      : deploy.sh                                                     ##
-##  Project   : flappy_gb                                                     ##
-##  Date      : Jun 01, 2023                                                  ##
+##  File      : build-static.sh                                               ##
+##  Project   : nuclear_rain                                                  ##
+##  Date      : 2023-06-08                                                    ##
 ##  License   : GPLv3                                                         ##
 ##  Author    : mateus.digital <hello@mateus.digital>                         ##
 ##  Copyright : mateus.digital - 2023                                         ##
-##                                                                            ##
 ##                                                                            ##
 ##  Description :                                                             ##
 ##   Deploys the output of scripts/build-static.sh to the remote server.      ##

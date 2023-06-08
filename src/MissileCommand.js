@@ -199,8 +199,8 @@ async function Setup()
     Input_InstallBasicMouseHandler(Canvas);
     Input_InstallBasicKeyboardHandler();
 
-    await LoadFont('edit_undo_line_brkregular',  './res/edunline-webfont.woff2' )
-    await LoadFont('digitalixregular',           './res/digitalix-webfont.woff2')
+    await LoadFont('edit_undo_line_brkregular',  './fonts/edunline-webfont.woff2' )
+    await LoadFont('digitalixregular',           './fonts/digitalix-webfont.woff2')
 
     BIG_TEXT_FONT_NAME   = "edit_undo_line_brkregular";
     SMALL_TEXT_FONT_NAME = "digitalixregular";

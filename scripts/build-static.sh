@@ -11,7 +11,7 @@
 ##                      O      *        '       .                             ##
 ##                                                                            ##
 ##  File      : build-static.sh                                               ##
-##  Project   : simple_snake                                                  ##
+##  Project   : nuclear_rain                                                  ##
 ##  Date      : 2023-06-08                                                    ##
 ##  License   : GPLv3                                                         ##
 ##  Author    : mateus.digital <hello@mateus.digital>                         ##
@@ -41,11 +41,14 @@ rm -rf   "${ROOT_DIR}/out/";
 mkdir -p "${ROOT_DIR}/out/";
 
 ## copy things.
-cp -R "${ROOT_DIR}/index.html"  "${ROOT_DIR}/out/";
-cp -R "${ROOT_DIR}/src"         "${ROOT_DIR}/out/";
-cp -R "${ROOT_DIR}/scripts"     "${ROOT_DIR}/out/";
-cp -R "${ROOT_DIR}/libs"        "${ROOT_DIR}/out/";
-cp -R "${ROOT_DIR}/css"         "${ROOT_DIR}/out/";
+cp -vR "${ROOT_DIR}/index.html"  "${ROOT_DIR}/out/";
+cp -vR "${ROOT_DIR}/src"         "${ROOT_DIR}/out/";
+cp -vR "${ROOT_DIR}/scripts"     "${ROOT_DIR}/out/";
+cp -vR "${ROOT_DIR}/libs"        "${ROOT_DIR}/out/";
+cp -vR "${ROOT_DIR}/css"         "${ROOT_DIR}/out/";
+cp -vR "${ROOT_DIR}/fonts/"      "${ROOT_DIR}/out/";
+
+
 
 ## remove git repos from out/
 find "$ROOT_DIR/out" -iname "*.git*" -type d | xargs rm -rf;

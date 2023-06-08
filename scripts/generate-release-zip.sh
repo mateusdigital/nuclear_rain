@@ -11,7 +11,7 @@
 ##                      O      *        '       .                             ##
 ##                                                                            ##
 ##  File      : generate-release-zip.sh                                       ##
-##  Project   : simple_snake                                                  ##
+##  Project   : nuclear_rain                                                  ##
 ##  Date      : 2023-06-08                                                    ##
 ##  License   : GPLv3                                                         ##
 ##  Author    : mateus.digital <hello@mateus.digital>                         ##
