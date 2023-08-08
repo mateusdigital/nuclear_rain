@@ -35,7 +35,7 @@ readonly ROOT_DIR="$(dirname "$SCRIPT_DIR")";
 
 readonly SOURCE_FOLDER="${ROOT_DIR}/out";
 readonly REMOTE_SERVER="mateus@mateus.digital";
-readonly REMOTE_FOLDER="/var/www/mateus.digital/nuclear_rain";
+readonly REMOTE_FOLDER="/var/www/mateus.digital/html/nuclear_rain";
 
 rsync -avz                                       \
       "${SOURCE_FOLDER}/"                        \
