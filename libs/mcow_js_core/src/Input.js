@@ -1,21 +1,24 @@
-//~---------------------------------------------------------------------------//
-//                        _      _                 _   _                      //
-//                    ___| |_ __| |_ __ ___   __ _| |_| |_                    //
-//                   / __| __/ _` | '_ ` _ \ / _` | __| __|                   //
-//                   \__ \ || (_| | | | | | | (_| | |_| |_                    //
-//                   |___/\__\__,_|_| |_| |_|\__,_|\__|\__|                   //
+//----------------------------------------------------------------------------//
+//                               *       +                                    //
+//                         '                  |                               //
+//                     ()    .-.,="``"=.    - o -                             //
+//                           '=/_       \     |                               //
+//                        *   |  '=._    |                                    //
+//                             \     `=./`,        '                          //
+//                          .   '=.__.=' `='      *                           //
+//                 +                         +                                //
+//                      O      *        '       .                             //
 //                                                                            //
 //  File      : Input.js                                                      //
-//  Project   : mcow_js_core                                                  //
-//  Date      : Feb 28, 2020                                                  //
-//  License   : GPLv3                                                         //
-//  Author    : stdmatt <stdmatt@pixelwizards.io>                             //
-//  Copyright : stdmatt 2020                                                  //
+//  Project   : n4                                                            //
+//  Date      : 2025-03-17                                                    //
+//  License   : See project's COPYING.TXT for full info.                      //
+//  Author    : mateus.digital <hello@mateus.digital>                         //
+//  Copyright : mateus.digital - 2025                                         //
 //                                                                            //
 //  Description :                                                             //
 //                                                                            //
-//---------------------------------------------------------------------------~//
-
+//----------------------------------------------------------------------------//
 
 //----------------------------------------------------------------------------//
 // Constants                                                                  //
@@ -33,12 +36,11 @@ const KEY_S = 115;
 const KEY_D = 100;
 const KEY_R = 114;
 
-
 //----------------------------------------------------------------------------//
 // Globals                                                                    //
 //----------------------------------------------------------------------------//
-let Mouse_X = 0;
-let Mouse_Y = 0;
+let Mouse_X              = 0;
+let Mouse_Y              = 0;
 let Mouse_IsClicked      = false;
 let Mouse_IsRightClicked = false;
 let Mouse_IsDown         = false;
@@ -54,83 +56,88 @@ let Mouse_WheelY         = 0;
 //------------------------------------------------------------------------------
 function Input_InstallBasicMouseHandler(htmlElement)
 {
-    if(Utils_IsNullOrUndefined(htmlElement)) {
-        htmlElement = window;
+  if (Utils_IsNullOrUndefined(htmlElement)) {
+    htmlElement = window;
+  }
+
+  // Move
+  htmlElement.addEventListener("mousemove", function(e) {
+    var r = htmlElement.getBoundingClientRect();
+    if (htmlElement === document.body) {
+      Mouse_X = e.clientX;
+      Mouse_Y = e.clientY;
+    }
+    else {
+      Mouse_X = (e.clientX - r.left) / (r.right - r.left) * htmlElement.width;
+      Mouse_Y = (e.clientY - r.top) / (r.bottom - r.top) * htmlElement.height;
     }
 
-    // Move
-    htmlElement.addEventListener("mousemove", function(e) {
-        var r = htmlElement.getBoundingClientRect();
-        Mouse_X = (e.clientX - r.left) / (r.right  - r.left) * htmlElement.width;
-        Mouse_Y = (e.clientY - r.top ) / (r.bottom - r.top ) * htmlElement.height;
+    if (typeof (OnMouseMove) == "function") {
+      OnMouseMove();
+    }
+  }, false);
 
-        if(typeof(OnMouseMove) == "function") {
-            OnMouseMove();
-        }
-    }, false);
+  // Left Mouse Click
+  htmlElement.addEventListener("click", event => {
+    Mouse_IsClicked = true;
+    if (typeof (OnMouseClick) == "function") {
+      OnMouseClick();
+    }
+  });
 
+  // Right Mouse Click
+  htmlElement.addEventListener('contextmenu', function(ev) {
+    ev.preventDefault();
+    Mouse_IsRightClicked = true;
+    if (typeof (OnMouseRightClick) == "function") {
+      OnMouseRightClick();
+    }
+  }, false);
 
-    // Left Mouse Click
-    htmlElement.addEventListener("click", event => {
-        Mouse_IsClicked = true;
-        if(typeof(OnMouseClick) == "function") {
-            OnMouseClick();
-        }
-    });
+  // Mouse Down
+  htmlElement.addEventListener("mousedown", event => {
+    Mouse_IsDown = true;
+    if (typeof (OnMouseDown) == "function") {
+      OnMouseDown();
+    }
+  });
 
-    // Right Mouse Click
-    htmlElement.addEventListener('contextmenu', function(ev) {
-        ev.preventDefault();
-        Mouse_IsRightClicked = true;
-        if(typeof(OnMouseRightClick) == "function") {
-            OnMouseRightClick();
-        }
-    }, false);
+  // Mouse Up
+  htmlElement.addEventListener("mouseup", event => {
+    Mouse_IsDown = false;
+    if (typeof (OnMouseUp) == "function") {
+      OnMouseUp();
+    }
+  });
 
-    // Mouse Down
-    htmlElement.addEventListener("mousedown", event => {
-        Mouse_IsDown = true;
-        if(typeof(OnMouseDown) == "function") {
-            OnMouseDown();
-        }
-    });
-
-    // Mouse Up
-    htmlElement.addEventListener("mouseup", event => {
-        Mouse_IsDown = false;
-        if(typeof(OnMouseUp) == "function") {
-            OnMouseUp();
-        }
-     });
-
-     // Mouse Whell
-     htmlElement.addEventListener("wheel", event => {
-        // Mouse_WheelX += event.wheelDeltaX;
-        Mouse_WheelY += event.wheelDeltaY;
-        if(typeof(OnMouseWheel) == "function") {
-            OnMouseWheel(event.wheelDeltaX, event.wheelDeltaY);
-        }
-     });
+  // Mouse Whell
+  htmlElement.addEventListener("wheel", event => {
+    // Mouse_WheelX += event.wheelDeltaX;
+    Mouse_WheelY += event.wheelDeltaY;
+    if (typeof (OnMouseWheel) == "function") {
+      OnMouseWheel(event.wheelDeltaX, event.wheelDeltaY);
+    }
+  });
 }
 
 //------------------------------------------------------------------------------
 function Input_InstallBasicKeyboardHandler(htmlElement)
 {
-    if(Utils_IsNullOrUndefined(htmlElement)) {
-        htmlElement = window;
+  if (Utils_IsNullOrUndefined(htmlElement)) {
+    htmlElement = window;
+  }
+
+  // Keydown.
+  htmlElement.addEventListener('keydown', (event) => {
+    if (typeof (OnKeyDown) == "function") {
+      OnKeyDown(event);
     }
+  });
 
-    // Keydown.
-    htmlElement.addEventListener('keydown', (event) => {
-        if(typeof(OnKeyDown) == "function") {
-            OnKeyDown(event);
-        }
-    });
-
-    // Keyup.
-    htmlElement.addEventListener('keyup', (event) => {
-        if(typeof(OnKeyUp) == "function") {
-            OnKeyUp(event);
-        }
-    });
+  // Keyup.
+  htmlElement.addEventListener('keyup', (event) => {
+    if (typeof (OnKeyUp) == "function") {
+      OnKeyUp(event);
+    }
+  });
 }

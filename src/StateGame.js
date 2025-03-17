@@ -23,11 +23,15 @@
 //------------------------------------------------------------------------------
 function CheckCollisions_PlayerMissiles_Vs_EnemyMissile(index)
 {
-  let enemy_missile = enemyMissilesMgr.missiles[index];
-
+  let enemy_missile   = enemyMissilesMgr.missiles[index];
+  let collision_count = 0;
   for (let j = 0; j < explosionMgr.playerExplosions.length; ++j) {
     let player_explosion = explosionMgr.playerExplosions[j];
-    let collided         = Math_CircleContainsPoint(
+    if (player_explosion.exploded_count === undefined) {
+      player_explosion.exploded_count = 0;
+    }
+
+    let collided = Math_CircleContainsPoint(
       player_explosion.position.x,
       player_explosion.position.y,
       player_explosion.radius,
@@ -36,18 +40,18 @@ function CheckCollisions_PlayerMissiles_Vs_EnemyMissile(index)
     );
 
     if (collided) {
-      const missile = enemyMissilesMgr.killMissile(index);
-      const score   = missile.score;
+      const missile                    = enemyMissilesMgr.killMissile(index);
+      player_explosion.exploded_count += 1;
+      collision_count                 += 1;
 
-      AddScore(score);
+      const score = missile.score;
 
+      AddScore(score * player_explosion.exploded_count);
       camera.addPlayerExplosionShake(player_explosion.radius);
-
-      return true;
     }
   }
 
-  return false;
+  return collision_count != 0;
 }
 
 //------------------------------------------------------------------------------
@@ -205,7 +209,7 @@ function StateGame_Draw(dt)
   let color       = SCORE_COLOR;
   if (_scoreAddTimer <= SCORE_ADD_DURATION) {
     const curr_score = Math_Lerp(
-      _currScoreValue, _playerScore, _scoreAddTimer / SCORE_ADD_DURATION
+      _currScoreValue, g_PlayerScore, _scoreAddTimer / SCORE_ADD_DURATION
     );
 
     scoreHud.str = MakeScoreString(Math_Int(curr_score));
@@ -216,7 +220,7 @@ function StateGame_Draw(dt)
     color = chroma.hsv(hue, 1, 1, max_opacity);
   }
   else {
-    _currScoreValue = _playerScore;
+    _currScoreValue = g_PlayerScore;
   }
 
   Canvas_SetFillStyle(color);
@@ -268,15 +272,15 @@ function StateGame_KeyUp(code)
 
 // -----------------------------------------------------------------------------
 const SCORE_ADD_DURATION = 2;
-const SCORE_ZEROES       = 8;
+const SCORE_ZEROES       = 5;
 let   _scoreAddTimer     = 0;
-let   _playerScore       = 0;
+let   g_PlayerScore      = 0;
 let   _currScoreValue    = 0;
 
 // -----------------------------------------------------------------------------
 function AddScore(score)
 {
-  _playerScore   += score;
+  g_PlayerScore  += score;
   _scoreAddTimer  = 0;
 }
 
@@ -288,5 +292,6 @@ function MakeScoreString(score)
     let zeros = SCORE_ZEROES - score_str.length;
     score_str = "0".repeat(zeros) + score_str;
   }
+
   return String_Cat(SCORE_FORMAT, score_str);
 }
