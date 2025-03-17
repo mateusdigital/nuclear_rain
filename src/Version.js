@@ -19,12 +19,10 @@
 // Constants                                                                  //
 //----------------------------------------------------------------------------//
 const NUCLEAR_RAIN_VERSION = "1.1.2";
+const NUCLEAR_RAIN_AUTHOR  = "mateusdigital";
 
 //----------------------------------------------------------------------------//
 // Public Functions                                                           //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-function GetVersion()
-{
-    return NUCLEAR_RAIN_VERSION;
-}
+function GetVersion() { return NUCLEAR_RAIN_VERSION; }
