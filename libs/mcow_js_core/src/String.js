@@ -5,9 +5,9 @@
 //                   \__ \ || (_| | | | | | | (_| | |_| |_                    //
 //                   |___/\__\__,_|_| |_| |_|\__,_|\__|\__|                   //
 //                                                                            //
-//  File      : Version.js                                                    //
-//  Project   : nuclear_rain                                                  //
-//  Date      : Mar 14, 2020                                                  //
+//  File      : String.js                                                     //
+//  Project   : mcow_js_core                                                  //
+//  Date      : Feb 28, 2020                                                  //
 //  License   : GPLv3                                                         //
 //  Author    : stdmatt <stdmatt@pixelwizards.io>                             //
 //  Copyright : stdmatt 2020                                                  //
@@ -15,14 +15,28 @@
 //  Description :                                                             //
 //                                                                            //
 //---------------------------------------------------------------------------~//
-//----------------------------------------------------------------------------//
-// Constants                                                                  //
-//----------------------------------------------------------------------------//
-const NUCLEAR_RAIN_VERSION = "1.1.2";
-const NUCLEAR_RAIN_AUTHOR  = "mateusdigital";
 
 //----------------------------------------------------------------------------//
-// Public Functions                                                           //
+// String                                                                     //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-function GetVersion() { return NUCLEAR_RAIN_VERSION; }
+function String_Cat()
+{
+    let s = "";
+    for(let i = 0; i < arguments.length; ++i) {
+        s += arguments[i];
+    }
+    return s;
+}
+
+//------------------------------------------------------------------------------
+function String_Join(sep, ...args)
+{
+    let s = "";
+    for(let i = 0; i < args.length-1; ++i) {
+        s += args[i] + sep;
+    }
+    s += Array_GetLast(args);
+
+    return s;
+}
