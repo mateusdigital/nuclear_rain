@@ -36,7 +36,11 @@ function CheckCollisions_PlayerMissiles_Vs_EnemyMissile(index)
     );
 
     if (collided) {
-      enemyMissilesMgr.killMissile(index);
+      const missile = enemyMissilesMgr.killMissile(index);
+      const score   = missile.score;
+
+      AddScore(score);
+
       camera.addPlayerExplosionShake(player_explosion.radius);
 
       return true;
@@ -144,6 +148,7 @@ function CheckGameOver()
   }
 }
 
+// -----------------------------------------------------------------------------
 function CheckNextLevel()
 {
   if (!enemyMissilesMgr.done) {
@@ -165,12 +170,22 @@ let defenderMissilesMgr;
 let defenderReticle;
 let camera;
 let keyboard = [];
+let scoreHud = null;
+// -----------------------------------------------------------------------------
+const SCORE_COLOR  = chroma.rgb(255, 255, 255, 0.2);
+const SCORE_FORMAT = "score: ";
 
 //----------------------------------------------------------------------------//
 // Setup / Draw                                                               //
 //----------------------------------------------------------------------------//
 //------------------------------------------------------------------------------
-function StateGame_Setup() { ResetGame(); }
+function StateGame_Setup()
+{
+  ResetGame();
+
+  scoreHud =
+    new Text(MakeScoreString(0), SMALL_TEXT_FONT_SIZE, SMALL_TEXT_FONT_NAME);
+}
 
 //------------------------------------------------------------------------------
 function StateGame_Draw(dt)
@@ -186,6 +201,27 @@ function StateGame_Draw(dt)
   explosionMgr.update(dt);
   camera.update(dt);
 
+  _scoreAddTimer += dt;
+  let color       = SCORE_COLOR;
+  if (_scoreAddTimer <= SCORE_ADD_DURATION) {
+    const curr_score = Math_Lerp(
+      _currScoreValue, _playerScore, _scoreAddTimer / SCORE_ADD_DURATION
+    );
+
+    scoreHud.str = MakeScoreString(Math_Int(curr_score));
+    const hue    = (Time_Total * 200) % 360;
+    const max_opacity =
+      Math_Max(0.8, 0.2 + (_scoreAddTimer / SCORE_ADD_DURATION));
+
+    color = chroma.hsv(hue, 1, 1, max_opacity);
+  }
+  else {
+    _currScoreValue = _playerScore;
+  }
+
+  Canvas_SetFillStyle(color);
+  scoreHud.drawAt(0, Canvas_Edge_Top + scoreHud.height);
+
   CheckShooting();
   CheckCollisions();
   CheckGameOver();
@@ -194,17 +230,21 @@ function StateGame_Draw(dt)
   //
   // Draw
   Canvas_Push();
-  Canvas_Translate(camera.currPosition.x, camera.currPosition.y);
-  city.draw();
+  {
+    Canvas_Translate(camera.currPosition.x, camera.currPosition.y);
+    city.draw();
+  }
   Canvas_Pop();
 
   Canvas_Push();
-  Canvas_Translate(camera.currPosition.x, 0);
+  {
+    Canvas_Translate(camera.currPosition.x, 0);
 
-  enemyMissilesMgr.draw();
-  defenderMissilesMgr.draw();
-  explosionMgr.draw();
-  defenderReticle.draw();
+    enemyMissilesMgr.draw();
+    defenderMissilesMgr.draw();
+    explosionMgr.draw();
+    defenderReticle.draw();
+  }
   Canvas_Pop();
 }
 
@@ -220,4 +260,33 @@ function StateGame_KeyUp(code)
 {
   keyboard[code] = false;
   console.log("code up", code)
+}
+
+//
+// Score
+//
+
+// -----------------------------------------------------------------------------
+const SCORE_ADD_DURATION = 2;
+const SCORE_ZEROES       = 8;
+let   _scoreAddTimer     = 0;
+let   _playerScore       = 0;
+let   _currScoreValue    = 0;
+
+// -----------------------------------------------------------------------------
+function AddScore(score)
+{
+  _playerScore   += score;
+  _scoreAddTimer  = 0;
+}
+
+// -----------------------------------------------------------------------------
+function MakeScoreString(score)
+{
+  let score_str = Math_Int(score).toString();
+  if (score_str.length < SCORE_ZEROES) {
+    let zeros = SCORE_ZEROES - score_str.length;
+    score_str = "0".repeat(zeros) + score_str;
+  }
+  return String_Cat(SCORE_FORMAT, score_str);
 }

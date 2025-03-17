@@ -1,20 +1,25 @@
-//~---------------------------------------------------------------------------//
-//                        _      _                 _   _                      //
-//                    ___| |_ __| |_ __ ___   __ _| |_| |_                    //
-//                   / __| __/ _` | '_ ` _ \ / _` | __| __|                   //
-//                   \__ \ || (_| | | | | | | (_| | |_| |_                    //
-//                   |___/\__\__,_|_| |_| |_|\__,_|\__|\__|                   //
+//----------------------------------------------------------------------------//
+//                               *       +                                    //
+//                         '                  |                               //
+//                     ()    .-.,="``"=.    - o -                             //
+//                           '=/_       \     |                               //
+//                        *   |  '=._    |                                    //
+//                             \     `=./`,        '                          //
+//                          .   '=.__.=' `='      *                           //
+//                 +                         +                                //
+//                      O      *        '       .                             //
 //                                                                            //
 //  File      : EnemyMissile.js                                               //
 //  Project   : nuclear_rain                                                  //
-//  Date      : Aug 26, 2019                                                  //
-//  License   : GPLv3                                                         //
-//  Author    : stdmatt <stdmatt@pixelwizards.io>                             //
-//  Copyright : stdmatt 2019, 2020                                            //
+//  Date      : 2019-08-26                                                    //
+//  License   : See project's COPYING.TXT for full info.                      //
+//  Author    : mateus.digital <hello@mateus.digital>                         //
+//  Copyright : mateus.digital - 2019 - 2025                                  //
 //                                                                            //
 //  Description :                                                             //
 //                                                                            //
-//---------------------------------------------------------------------------~//
+//----------------------------------------------------------------------------//
+
 // RR030307466BR
 
 //----------------------------------------------------------------------------//
@@ -23,74 +28,80 @@
 //------------------------------------------------------------------------------
 class EnemyMissileManager
 {
-    //--------------------------------------------------------------------------
-    constructor()
-    {
-        this.missiles = [];
+  //--------------------------------------------------------------------------
+  constructor()
+  {
+    this.missiles = [];
 
-        this.shotMissiles    = 0;
-        this.maxShotMissiles = levelInfo.enemyMissileManager_maxShotMissiles;
+    this.shotMissiles    = 0;
+    this.maxShotMissiles = levelInfo.enemyMissileManager_maxShotMissiles;
 
-        this.activeMissiles    = 0;
-        this.maxActiveMissiles = levelInfo.enemyMissileManager_maxActiveMissiles;
+    this.activeMissiles    = 0;
+    this.maxActiveMissiles = levelInfo.enemyMissileManager_maxActiveMissiles;
 
-        this.timeToSpawnMissile    = 0;
-        this.maxTimeToSpawnMissile = levelInfo.enemyMissileManager_maxTimeToSpawnMissile;
+    this.timeToSpawnMissile = 0;
+    this.maxTimeToSpawnMissile =
+      levelInfo.enemyMissileManager_maxTimeToSpawnMissile;
 
-        this.done = false;
-    } // ctor
+    this.done = false;
+  } // ctor
 
-    //--------------------------------------------------------------------------
-    killMissile(index)
-    {
-        let m = this.missiles[index];
-        Array_RemoveAt(this.missiles, index);
+  //--------------------------------------------------------------------------
+  killMissile(index)
+  {
+    let missile = this.missiles[index];
+    Array_RemoveAt(this.missiles, index);
 
-        explosionMgr.addOtherExplosion(m.currPosition.x, m.currPosition.y);
-        --this.activeMissiles;
-    } // killMissile
+    explosionMgr.addOtherExplosion(
+      missile.currPosition.x, missile.currPosition.y
+    );
 
-    //--------------------------------------------------------------------------
-    update(dt)
-    {
-        if(this.done) {
-            return;
-        }
-        if(this.activeMissiles == 0 && this.shotMissiles >= this.maxShotMissiles) {
-            this.done = true;
-        }
+    --this.activeMissiles;
 
-        //
-        // Generate new missiles.
-        if(this.activeMissiles < this.maxActiveMissiles && this.shotMissiles < this.maxShotMissiles) {
-            this.timeToSpawnMissile -= dt;
-            if(this.timeToSpawnMissile <= 0) {
-                // Reset the spawn timer.
-                this.timeToSpawnMissile = Random_Number(0, this.maxTimeToSpawnMissile);
+    return missile;
+  } // killMissile
 
-                // Create a new missile.
-                this.missiles.push(new EnemyMissile());
-                ++this.activeMissiles;
-                ++this.shotMissiles;
-            }
-        }
+  //--------------------------------------------------------------------------
+  update(dt)
+  {
+    if (this.done) {
+      return;
+    }
+    if (this.activeMissiles == 0 && this.shotMissiles >= this.maxShotMissiles) {
+      this.done = true;
+    }
 
-        //
-        // Update the current missiles.
-        for(let i = 0, len = this.missiles.length; i < len; ++i) {
-            this.missiles[i].update(dt);
-        }
-    } // update
+    //
+    // Generate new missiles.
+    if (this.activeMissiles < this.maxActiveMissiles &&
+        this.shotMissiles < this.maxShotMissiles) {
+      this.timeToSpawnMissile -= dt;
+      if (this.timeToSpawnMissile <= 0) {
+        // Reset the spawn timer.
+        this.timeToSpawnMissile = Random_Number(0, this.maxTimeToSpawnMissile);
 
-    //--------------------------------------------------------------------------
-    draw()
-    {
-        for(let i = 0, len = this.missiles.length; i < len; ++i) {
-            this.missiles[i].draw();
-        }
-    } // draw
+        // Create a new missile.
+        this.missiles.push(new EnemyMissile());
+        ++this.activeMissiles;
+        ++this.shotMissiles;
+      }
+    }
+
+    //
+    // Update the current missiles.
+    for (let i = 0, len = this.missiles.length; i < len; ++i) {
+      this.missiles[i].update(dt);
+    }
+  } // update
+
+  //--------------------------------------------------------------------------
+  draw()
+  {
+    for (let i = 0, len = this.missiles.length; i < len; ++i) {
+      this.missiles[i].draw();
+    }
+  } // draw
 }; // EnemyMissileManager
-
 
 //----------------------------------------------------------------------------//
 // Enemy Missile                                                              //
@@ -102,87 +113,90 @@ const ENEMY_MISSILE_TRAIL_HEAD_RADIUS = 3;
 //------------------------------------------------------------------------------
 class EnemyMissile
 {
-    //--------------------------------------------------------------------------
-    constructor()
-    {
-        this.startPosition = this._randomizeStartPosition();
-        this.endPosition   = this._randomizeEndPosition  ();
-        this.currPosition  = Vector_Copy(this.startPosition);
+  //--------------------------------------------------------------------------
+  constructor()
+  {
+    this.startPosition = this._randomizeStartPosition();
+    this.endPosition   = this._randomizeEndPosition();
+    this.currPosition  = Vector_Copy(this.startPosition);
 
-        this.angle = this._randomizeAngle();
-        this.speed = levelInfo.enemyMissile_speed;
+    this.angle = this._randomizeAngle();
+    this.speed = levelInfo.enemyMissile_speed;
 
-        this.headColor  = levelInfo.enemyMissile_headColor;
-        this.trailColor = levelInfo.enemyMissile_trailColor;
+    this.headColor  = levelInfo.enemyMissile_headColor;
+    this.trailColor = levelInfo.enemyMissile_trailColor;
 
-        this.done = false;
-    } // ctor
+    this.done = false;
 
-    //--------------------------------------------------------------------------
-    update(dt)
-    {
-        if(this.done) {
-           return;
-        }
+    this.score = 0;
+  } // ctor
 
-        //
-        // Update Position.
-        this.currPosition.x += Math_Cos(this.angle) * this.speed * dt;
-        this.currPosition.y += Math_Sin(this.angle) * this.speed * dt;
-    } // update
+  //--------------------------------------------------------------------------
+  update(dt)
+  {
+    if (this.done) {
+      return;
+    }
 
-    //--------------------------------------------------------------------------
-    draw()
-    {
-        if(this.done) {
-            return;
-         }
+    //
+    // Update Position.
+    this.currPosition.x += Math_Cos(this.angle) * this.speed * dt;
+    this.currPosition.y += Math_Sin(this.angle) * this.speed * dt;
+  } // update
 
-        let sx = this.startPosition.x;
-        let sy = this.startPosition.y;
-        let cx = this.currPosition.x;
-        let cy = this.currPosition.y;
+  //--------------------------------------------------------------------------
+  draw()
+  {
+    if (this.done) {
+      return;
+    }
 
-        Canvas_Push()
-            // @TODO(stdmatt): Debug draw...
-            // Canvas_SetStrokeStyle("gray");
-            // Canvas_SetStrokeSize(2);
-            // Canvas_DrawLine(sx, sy, this.endPosition.x, this.endPosition.y);
+    let sx = this.startPosition.x;
+    let sy = this.startPosition.y;
+    let cx = this.currPosition.x;
+    let cy = this.currPosition.y;
 
-            //
-            // Trail
-            Canvas_SetStrokeStyle(this.trailColor);
-            Canvas_SetStrokeSize(ENEMY_MISSILE_TRAIL_STROKE_SIZE);
-            Canvas_DrawLine(sx, sy, cx, cy);
+    this.score = Math_Distance(sx, sy, cx, cy);
 
-            //
-            // Head
-            Canvas_SetFillStyle(this.headColor);
-            Canvas_FillCircle(cx, cy, ENEMY_MISSILE_TRAIL_HEAD_RADIUS);
-        Canvas_Pop();
-    } // draw
+    Canvas_Push()
+    // @TODO(stdmatt): Debug draw...
+    // Canvas_SetStrokeStyle("gray");
+    // Canvas_SetStrokeSize(2);
+    // Canvas_DrawLine(sx, sy, this.endPosition.x, this.endPosition.y);
 
+    //
+    // Trail
+    Canvas_SetStrokeStyle(this.trailColor);
+    Canvas_SetStrokeSize(ENEMY_MISSILE_TRAIL_STROKE_SIZE);
+    Canvas_DrawLine(sx, sy, cx, cy);
 
-    //--------------------------------------------------------------------------
-    _randomizeStartPosition()
-    {
-        let x = Random_Int(Canvas_Edge_Left, Canvas_Edge_Right);
-        return Vector_Create(x, Canvas_Edge_Top);
-    } // _randomizeStartPosition
+    //
+    // Head
+    Canvas_SetFillStyle(this.headColor);
+    Canvas_FillCircle(cx, cy, ENEMY_MISSILE_TRAIL_HEAD_RADIUS);
+    Canvas_Pop();
+  } // draw
 
-    //--------------------------------------------------------------------------
-    _randomizeEndPosition()
-    {
-        let x = Random_Int(Canvas_Edge_Left, Canvas_Edge_Right);
-        return Vector_Create(x, Canvas_Edge_Bottom);
-    } // _randomizeEndPosition
+  //--------------------------------------------------------------------------
+  _randomizeStartPosition()
+  {
+    let x = Random_Int(Canvas_Edge_Left, Canvas_Edge_Right);
+    return Vector_Create(x, Canvas_Edge_Top);
+  } // _randomizeStartPosition
 
-    //--------------------------------------------------------------------------
-    _randomizeAngle()
-    {
-        let d = Vector_Sub(this.endPosition, this.startPosition);
-        let a = Math.atan2(d.y, d.x);
+  //--------------------------------------------------------------------------
+  _randomizeEndPosition()
+  {
+    let x = Random_Int(Canvas_Edge_Left, Canvas_Edge_Right);
+    return Vector_Create(x, Canvas_Edge_Bottom);
+  } // _randomizeEndPosition
 
-        return a;
-    } // _randomizeAngle
+  //--------------------------------------------------------------------------
+  _randomizeAngle()
+  {
+    let d = Vector_Sub(this.endPosition, this.startPosition);
+    let a = Math.atan2(d.y, d.x);
+
+    return a;
+  } // _randomizeAngle
 }; // class EnemyMissile
