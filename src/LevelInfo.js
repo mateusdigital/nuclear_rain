@@ -18,26 +18,26 @@
 
 function RandomColor()
 {
-    let h = Random_Int(0, 360);
-    return chroma.hsl(h, 1.0, 0.5);
+  let h = Random_Int(0, 360);
+  return chroma.hsl(h, 1.0, 0.5);
 }
 
 class LevelInfo
 {
-    constructor(level)
-    {
-        this.level = level;
+  constructor(level)
+  {
+    this.level = level;
 
-        this.enemyMissileManager_maxActiveMissiles     = 6 + level;
-        this.enemyMissileManager_maxTimeToSpawnMissile = 4 - level / 10;
-        this.enemyMissileManager_maxShotMissiles       = level * 1.5;
+    this.enemyMissileManager_maxActiveMissiles     = 6 + level;
+    this.enemyMissileManager_maxTimeToSpawnMissile = 4 - level / 10;
+    this.enemyMissileManager_maxShotMissiles       = level * 1.5;
 
-        this.enemyMissile_speed  = 80 + (level * (level / 5));
+    this.enemyMissile_speed = 80 + (level * (level / 5));
 
-        this.enemyMissile_headColor  = RandomColor();
-        this.enemyMissile_trailColor = RandomColor();
+    this.enemyMissile_headColor  = RandomColor();
+    this.enemyMissile_trailColor = RandomColor();
 
-        this.terrainColor  = RandomColor();
-        this.buildingColor = RandomColor();
-    }
+    this.terrainColor  = RandomColor();
+    this.buildingColor = RandomColor();
+  }
 }
